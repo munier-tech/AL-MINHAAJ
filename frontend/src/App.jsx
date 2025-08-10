@@ -119,7 +119,7 @@ function App() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <Loader className="w-12 h-12 animate-spin text-indigo-600 dark:text-indigo-400 mx-auto mb-4" size={25} />
-          <p className="text-indigo-600 dark:text-indigo-400 font-semi-bold">Loading Al-Qayim Management System...</p>
+          <p className="text-indigo-600 dark:text-indigo-400 font-semi-bold">Loading AL-MINHAAJ Management System...</p>
         </div>
       </div>
     );

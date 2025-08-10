@@ -1,7 +1,7 @@
 {
-  "name": "al-qayim-management-system-backend",
+  "name": "al-minhaaj-management-system-backend",
   "version": "1.0.0",
-  "description": "Backend for Al-Qayim Management System",
+  "description": "Backend for AL-MINHAAJ Management System",
   "main": "index.js",
   "type": "module",
   "scripts": {

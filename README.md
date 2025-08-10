@@ -1,4 +1,4 @@
-# Al-Qayim Management System
+# AL-MINHAAJ Management System
 
 A comprehensive school management system built with the MERN stack (MongoDB, Express.js, React, Node.js) featuring modern UI with Material-UI.
 
@@ -59,7 +59,7 @@ A comprehensive school management system built with the MERN stack (MongoDB, Exp
 ## Project Structure
 
 ```
-al-qayim-management-system/
+al-minhaaj-management-system/
 ├── backend/
 │   ├── controllers/        # Business logic
 │   ├── models/            # Database schemas
@@ -93,7 +93,7 @@ al-qayim-management-system/
 1. **Clone the repository**
 ```bash
 git clone <your-repo-url>
-cd al-qayim-management-system
+cd al-minhaaj-management-system
 ```
 
 2. **Install backend dependencies**
@@ -112,7 +112,7 @@ npm install
 Create `.env` file in the backend directory:
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/al-qayim-db
+MONGODB_URI=mongodb://localhost:27017/al-minhaaj-db
 JWT_SECRET=your-super-secret-jwt-key
 CLOUDINARY_CLOUD_NAME=your-cloudinary-name
 CLOUDINARY_API_KEY=your-api-key
@@ -224,4 +224,4 @@ For support, email your-email@example.com or create an issue in the repository.
 
 ---
 
-**Al-Qayim Management System** - Empowering educational institutions with modern technology.
+**AL-MINHAAJ Management System** - Empowering educational institutions with modern technology.

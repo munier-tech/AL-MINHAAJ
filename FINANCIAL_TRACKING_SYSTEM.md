@@ -1,4 +1,4 @@
-# Financial Tracking System - Al-Qiyam School Management
+# Financial Tracking System - AL-MINHAAJ School Management
 
 ## Overview
 

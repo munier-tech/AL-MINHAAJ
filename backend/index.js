@@ -46,7 +46,7 @@ app.use((req, res, next) => {
 // API test endpoint
 app.get('/api', (req, res) => {
   res.json({ 
-    message: 'Al-Qayim Management System API is running!', 
+    message: 'AL-MINHAAJ Management System API is running!', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
     cors: {

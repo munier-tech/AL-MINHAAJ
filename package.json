@@ -1,5 +1,5 @@
 {
-  "name": "al-qayim-management-system",
+  "name": "al-minhaaj-management-system",
   "version": "1.0.0",
   "description": "A comprehensive school management system built with the MERN stack",
   "private": true,
@@ -17,7 +17,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/munier-tech/AL-QAYIM-MANAGEMENT-SYSTEM.git"
+    "url": "git+https://github.com/munier-tech/AL-MINHAAJ-MANAGEMENT-SYSTEM.git"
   },
   "keywords": [
     "school-management",

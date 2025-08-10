@@ -81,7 +81,7 @@ curl http://localhost:5000/api
 
 **Expected Response:**
 ```json
-{"message":"Al-Qayim Management System API is running!"}
+{"message":"AL-MINHAAJ Management System API is running!"}
 ```
 
 ## ✨ Remember: Keep It Simple!

@@ -42,7 +42,7 @@ CLOUDINARY_API_SECRET=your_cloudinary_secret
 You should see a response like:
 ```json
 {
-  "message": "Al-Qayim Management System API is running!",
+  "message": "AL-MINHAAJ Management System API is running!",
   "timestamp": "2024-01-01T00:00:00.000Z",
   "environment": "production"
 }

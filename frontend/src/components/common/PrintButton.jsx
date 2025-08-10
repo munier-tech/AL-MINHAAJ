@@ -201,7 +201,7 @@ const PrintButton = ({
         </head>
         <body>
           <div class="header">
-            <div class="title">Nidaamka Maamulka Al-Qiyam</div>
+            <div class="title">Nidaamka Maamulka AL-MINHAAJ</div>
             <div class="subtitle">${title}</div>
             ${subtitle ? `<div class="subtitle">${subtitle}</div>` : ''}
           </div>

@@ -102,13 +102,13 @@ function Signup() {
             className="mt-6 text-3xl font-bold text-gray-900"
             variants={itemVariants}
           >
-            Al-qiyam
+            AL-MINHAAJ
           </motion.h2>
           <motion.p 
             className="mt-2 text-lg text-gray-600"
             variants={itemVariants}
           >
-            Nidaamka Maamulka Machadka Al-Qiyam
+            Nidaamka Maamulka Machadka AL-MINHAAJ
           </motion.p>
           <motion.p 
             className="mt-2 text-sm text-gray-500"

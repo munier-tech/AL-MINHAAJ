@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Al-Qayim Management System - Vercel Deployment Script
+# AL-MINHAAJ Management System - Vercel Deployment Script
 
 echo "🚀 Starting deployment to Vercel..."
 

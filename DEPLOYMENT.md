@@ -1,8 +1,8 @@
-# Deployment Guide - Al-Qayim Management System
+# Deployment Guide - AL-MINHAAJ Management System
 
 ## Vercel Deployment
 
-This guide will help you deploy your Al-Qayim Management System to Vercel.
+This guide will help you deploy your AL-MINHAAJ Management System to Vercel.
 
 ### Prerequisites
 

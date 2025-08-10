@@ -195,8 +195,8 @@ function DashboardLayout({ children }) {
     <div className="flex flex-col h-full bg-gray-900 text-gray-100">
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
         <div className="flex items-center space-x-3">
-          <img src="/machad.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
-          <span className="text-xl font-bold text-white">Al-Qiyam</span>
+                      <img src="/machad.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
+            <span className="text-xl font-bold text-white">AL-MINHAAJ</span>
         </div>
         <button
           onClick={() => setSidebarOpen(false)}
@@ -431,10 +431,10 @@ function DashboardLayout({ children }) {
             <div className="max-w-7xl mx-auto">
               {children}
             </div>
-            <footer className="mt-8 text-center text-sm text-gray-500">
-              <p>Al-Qiyam Management System © {new Date().getFullYear()}</p>
-              <p className="mt-1">Version 1.0.0 - Designed with passion for education</p>
-            </footer>
+                          <footer className="mt-8 text-center text-sm text-gray-500">
+                <p>AL-MINHAAJ Management System © {new Date().getFullYear()}</p>
+                <p className="mt-1">Version 1.0.0 - Designed with passion for education</p>
+              </footer>
           </main>
         </div>
       </div>

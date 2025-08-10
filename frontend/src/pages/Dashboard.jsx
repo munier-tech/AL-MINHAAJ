@@ -878,7 +878,7 @@ function Dashboard() {
             Ku soo dhawoow, <span className="text-blue-600">{user?.username}</span>!
           </h1>
           <p className="text-gray-600 mt-1 text-sm md:text-base">
-            Halkan waxa ku yaal waxyaabaha ka dhacaya Maamulka Al-Qayim maanta.
+            Halkan waxa ku yaal waxyaabaha ka dhacaya Maamulka AL-MINHAAJ maanta.
           </p>
         </div>
         <motion.button
