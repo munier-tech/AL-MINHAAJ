@@ -1,0 +1,39 @@
+{
+  "name": "al-qayim-management-system-backend",
+  "version": "1.0.0",
+  "description": "Backend for Al-Qayim Management System",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "build": "echo 'Backend build complete'",
+    "dev:frontend": "npm run dev --prefix ../frontend",
+    "dev:both": "concurrently \"npm run dev\" \"npm run dev:frontend\"",
+    "vercel-build": "echo 'Backend ready for deployment'"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "cloudinary": "^1.21.0",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dayjs": "^1.11.13",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "express-rate-limit": "^7.5.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.3",
+    "morgan": "^1.10.0",
+    "multer": "^2.0.2",
+    "redis": "^5.6.0",
+    "yarn": "^1.22.22"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.0",
+    "nodemon": "^3.1.10"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
