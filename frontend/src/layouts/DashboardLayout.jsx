@@ -195,7 +195,7 @@ function DashboardLayout({ children }) {
     <div className="flex flex-col h-full bg-gray-900 text-gray-100">
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
         <div className="flex items-center space-x-3">
-                      <img src="/machad.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
+                      <img src="/minhaaj.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
             <span className="text-xl font-bold text-white">AL-MINHAAJ</span>
         </div>
         <button
