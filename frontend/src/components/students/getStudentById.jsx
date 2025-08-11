@@ -297,16 +297,21 @@ const GetStudentById = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div>
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-500 mb-1">Magaca oo dhan</label>
-          {isEditing ? (
-            <input
-              className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
-              value={editForm.fullname}
-              onChange={(e) => setEditForm({ ...editForm, fullname: e.target.value })}
-            />
-          ) : (
-            <p className="text-lg font-medium">{selectedStudent.fullname}</p>
-          )}
+                     <label className="block text-sm font-medium text-gray-500 mb-1">Magaca oo dhan</label>
+           {isEditing ? (
+             <input
+               className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
+               value={editForm.fullname}
+               onChange={(e) => setEditForm({ ...editForm, fullname: e.target.value })}
+             />
+           ) : (
+             <div>
+               <p className="text-lg font-medium">{selectedStudent.fullname}</p>
+               {selectedStudent.studentId && (
+                 <p className="text-xs text-gray-500 mt-1">ID: {selectedStudent.studentId}</p>
+               )}
+             </div>
+           )}
         </div>
 
         <div className="mb-4">
