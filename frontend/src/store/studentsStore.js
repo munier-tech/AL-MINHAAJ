@@ -61,7 +61,8 @@ const useStudentsStore = create((set, get) => ({
         students: [...state.students, response.data.student],
         creating: false,
       }));
-      toast.success('Student created successfully');
+      const sid = response.data?.student?.studentId ? ` (ID: ${response.data.student.studentId})` : '';
+      toast.success(`Student created successfully${sid}`);
       return { success: true, student: response.data.student };
     } catch (error) {
       console.error('Error creating student:', error);

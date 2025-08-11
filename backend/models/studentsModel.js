@@ -5,6 +5,12 @@ const studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  studentId: {
+    type: String,
+    unique: true,
+    index: true,
+    sparse: true,
+  },
   age: Number,
   gender: {
     type: String,
@@ -67,6 +73,35 @@ const studentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+});
+
+// Generate a human-friendly unique ID like "STD-2025-123456"
+async function generateUniqueStudentId(doc) {
+  const year = new Date().getFullYear();
+  const prefix = `STD-${year}-`;
+
+  // Try a few times to avoid unlikely collisions
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const randomSixDigits = Math.floor(100000 + Math.random() * 900000);
+    const candidate = `${prefix}${randomSixDigits}`;
+    const exists = await doc.constructor.exists({ studentId: candidate });
+    if (!exists) return candidate;
+  }
+
+  // Fallback to ObjectId suffix to guarantee uniqueness
+  const fallback = `${prefix}${new mongoose.Types.ObjectId().toString().slice(-6).toUpperCase()}`;
+  return fallback;
+}
+
+studentSchema.pre("save", async function (next) {
+  try {
+    if (this.isNew && !this.studentId) {
+      this.studentId = await generateUniqueStudentId(this);
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 const Student = mongoose.model("Student", studentSchema);

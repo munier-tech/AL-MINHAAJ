@@ -296,7 +296,12 @@ const GetAllStudents = () => {
                 {filteredStudents.map((student) => (
                   <tr key={student._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-                      {student.fullname}
+                      <div className="flex flex-col">
+                        <span>{student.fullname}</span>
+                        {student.studentId && (
+                          <span className="text-xs text-gray-500 mt-1">ID: {student.studentId}</span>
+                        )}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-gray-500">
                       {student.age}
