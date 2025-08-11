@@ -139,7 +139,7 @@ const GetAllSubjects = () => {
                 subjects.map((subject) => (
                   <tr key={subject._id} className="border-t hover:bg-gray-50">
                     <td className="px-4 py-2">
-                      {editId === subject._id ? (
+                      {editId === subject.id ? (
                         <input
                           value={editData.name}
                           onChange={(e) =>

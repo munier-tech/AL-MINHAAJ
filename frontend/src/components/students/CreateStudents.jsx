@@ -202,37 +202,7 @@ const CreateStudent = () => {
                 />
               </div>
 
-              <h2 className="text-lg font-semibold text-gray-700 mt-6">Macluumaadka Lacagta</h2>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Wadarta Lacagta</label>
-                  <motion.input
-                    type="number"
-                    name="fee.total"
-                    value={formData.fee.total}
-                    onChange={handleChange}
-                    className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Geli wadarta lacagta"
-                    min="0"
-                    whileFocus={{ scale: 1.02 }}
-                  />
-                </div>
-                
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Lacagta la Bixiyay</label>
-                  <motion.input
-                    type="number"
-                    name="fee.paid"
-                    value={formData.fee.paid}
-                    onChange={handleChange}
-                    className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="Geli lacagta la bixiyay"
-                    min="0"
-                    whileFocus={{ scale: 1.02 }}
-                  />
-                </div>
-              </div>
+            
             </motion.div>
           </div>
 

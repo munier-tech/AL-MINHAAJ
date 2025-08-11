@@ -72,7 +72,7 @@ const FeeFile = () => {
 
   const handleCreateOrUpdateFee = async (student) => {
     if (!feeForm.amount || !feeForm.dueDate) {
-      alert("Please fill in amount and due date");
+      alert("Fadlan buuxi qadarka iyo taariikhda bixinta");
       return;
     }
 
@@ -131,7 +131,7 @@ const FeeFile = () => {
   };
 
   const handleDeleteFee = async (feeId) => {
-    if (!confirm("Are you sure you want to delete this fee record?")) return;
+    if (!confirm("Ma hubtaa inaad tirtirayso diiwaankan lacagta?")) return;
     
     try {
       await deleteFeeRecord(feeId);
@@ -169,8 +169,8 @@ const FeeFile = () => {
 
   const getMonthName = (monthNum) => {
     const months = [
-      "January", "February", "March", "April", "May", "June",
-      "July", "August", "September", "October", "November", "December"
+      "Janaayo", "Febraayo", "Maarso", "Abriil", "May", "Juun",
+      "Luulyo", "Agoosto", "Sebtembar", "Oktoobar", "Nofembar", "Disembar"
     ];
     return months[monthNum - 1];
   };
@@ -182,9 +182,9 @@ const FeeFile = () => {
   };
 
   const getStatusText = (student) => {
-    if (!student.feeRecord) return "No Record";
-    if (student.feeRecord.paid) return "Paid";
-    return "Unpaid";
+    if (!student.feeRecord) return "Diiwaan Ma Jiro";
+    if (student.feeRecord.paid) return "Lacag La Bixiyey";
+    return "Lacag Lama Bixin";
   };
 
   return (
@@ -196,17 +196,17 @@ const FeeFile = () => {
             <div className="p-2 bg-blue-100 rounded-lg">
               <FiDollarSign className="w-6 h-6 text-blue-600" />
             </div>
-            <h1 className="text-3xl font-bold">Individual Student Fee Management</h1>
+            <h1 className="text-3xl font-bold">Maareynta Lacagta Ardayga Qofka ah</h1>
           </div>
-          <p className="mt-1 text-sm opacity-90">Set and manage individual student fees with precise control.</p>
+          <p className="mt-1 text-sm opacity-90">Deji oo maamul lacagaha ardayda si sax ah.</p>
         </div>
 
         {/* Class and Period Selection */}
         <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Select Class and Period</h2>
+          <h2 className="text-lg font-semibold mb-4">Xulo Fasalka iyo Waqtiga</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Class</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Fasalka</label>
               <select
                 value={selectedClass?._id || ""}
                 onChange={(e) => {
@@ -215,7 +215,7 @@ const FeeFile = () => {
                 }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               >
-                <option value="">Select a class</option>
+                <option value="">Xulo Fasalka</option>
                 {classes.map((cls) => (
                   <option key={cls._id} value={cls._id}>{cls.name}</option>
                 ))}
@@ -223,7 +223,7 @@ const FeeFile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Month</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Bisha</label>
               <select
                 value={selectedMonth}
                 onChange={(e) => setSelectedMonth(parseInt(e.target.value))}
@@ -236,7 +236,7 @@ const FeeFile = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Year</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Sannadka</label>
               <input
                 type="number"
                 min="2020"
@@ -253,7 +253,7 @@ const FeeFile = () => {
                 disabled={!selectedClass || loadingStudents}
                 className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
               >
-                {loadingStudents ? "Loading..." : "Load Students"}
+                {loadingStudents ? "Soo laadinta..." : "Soo laad Ardayda"}
               </button>
             </div>
           </div>
@@ -268,7 +268,7 @@ const FeeFile = () => {
                   <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                   <input
                     type="text"
-                    placeholder="Search students..."
+                    placeholder="Raadi ardayga..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -281,10 +281,10 @@ const FeeFile = () => {
                   onChange={(e) => setFilterStatus(e.target.value)}
                   className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
-                  <option value="all">All Students</option>
-                  <option value="paid">Paid</option>
-                  <option value="unpaid">Unpaid</option>
-                  <option value="no-record">No Record</option>
+                  <option value="all">Dhammaan Ardayda</option>
+                  <option value="paid">Lacag La Bixiyey</option>
+                  <option value="unpaid">Lacag Lama Bixin</option>
+                  <option value="no-record">Diiwaan Ma Jiro</option>
                 </select>
               </div>
             </div>
@@ -299,8 +299,8 @@ const FeeFile = () => {
                 {selectedClass.name} - {getMonthName(selectedMonth)} {selectedYear}
               </h3>
               <p className="text-sm text-gray-600 mt-1">
-                {filteredStudents.length} student{filteredStudents.length !== 1 ? 's' : ''} 
-                {filterStatus !== 'all' && ` (${filterStatus.replace('-', ' ')})`}
+                {filteredStudents.length} arday{filteredStudents.length !== 1 ? "da" : ""}
+                {filterStatus !== "all" && ` (${filterStatus.replace("-", " ")})`}
               </p>
             </div>
 
@@ -308,11 +308,11 @@ const FeeFile = () => {
               <table className="w-full">
                 <thead className="bg-gray-50">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Fee Amount</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Due Date</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Arday</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qiimaha Lacagta</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Taariikhda Bixinta</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Xaaladda</th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ficilada</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -327,13 +327,13 @@ const FeeFile = () => {
                             type="number"
                             step="0.01"
                             value={feeForm.amount}
-                            onChange={(e) => setFeeForm({...feeForm, amount: e.target.value})}
+                            onChange={(e) => setFeeForm({ ...feeForm, amount: e.target.value })}
                             className="w-24 px-2 py-1 border border-gray-300 rounded text-sm"
-                            placeholder="Amount"
+                            placeholder="Qiimaha"
                           />
                         ) : (
                           <span className="text-gray-900">
-                            {student.feeRecord ? `$${student.feeRecord.amount}` : '-'}
+                            {student.feeRecord ? `$${student.feeRecord.amount}` : "-"}
                           </span>
                         )}
                       </td>
@@ -342,12 +342,14 @@ const FeeFile = () => {
                           <input
                             type="date"
                             value={feeForm.dueDate}
-                            onChange={(e) => setFeeForm({...feeForm, dueDate: e.target.value})}
+                            onChange={(e) => setFeeForm({ ...feeForm, dueDate: e.target.value })}
                             className="w-32 px-2 py-1 border border-gray-300 rounded text-sm"
                           />
                         ) : (
                           <span className="text-gray-900">
-                            {student.feeRecord ? new Date(student.feeRecord.dueDate).toLocaleDateString() : '-'}
+                            {student.feeRecord
+                              ? new Date(student.feeRecord.dueDate).toLocaleDateString()
+                              : "-"}
                           </span>
                         )}
                       </td>
@@ -357,13 +359,17 @@ const FeeFile = () => {
                             <input
                               type="checkbox"
                               checked={feeForm.paid}
-                              onChange={(e) => setFeeForm({...feeForm, paid: e.target.checked})}
+                              onChange={(e) => setFeeForm({ ...feeForm, paid: e.target.checked })}
                               className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                             />
-                            <span className="text-sm">Paid</span>
+                            <span className="text-sm">Lacag La Bixiyey</span>
                           </label>
                         ) : (
-                          <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(student)}`}>
+                          <span
+                            className={`px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                              student
+                            )}`}
+                          >
                             {getStatusText(student)}
                           </span>
                         )}
@@ -376,7 +382,7 @@ const FeeFile = () => {
                                 onClick={() => handleCreateOrUpdateFee(student)}
                                 disabled={feeLoading}
                                 className="p-1 text-green-600 hover:text-green-800"
-                                title="Save"
+                                title="Kaydi"
                               >
                                 <FiCheck className="w-4 h-4" />
                               </button>
@@ -386,7 +392,7 @@ const FeeFile = () => {
                                   setFeeForm({ amount: "", dueDate: "", note: "", paid: false });
                                 }}
                                 className="p-1 text-gray-600 hover:text-gray-800"
-                                title="Cancel"
+                                title="Jooji"
                               >
                                 <FiX className="w-4 h-4" />
                               </button>
@@ -396,25 +402,41 @@ const FeeFile = () => {
                               <button
                                 onClick={() => handleEditFee(student)}
                                 className="p-1 text-blue-600 hover:text-blue-800"
-                                title={student.feeRecord ? "Edit Fee" : "Add Fee"}
+                                title={student.feeRecord ? "Tafatir Lacag" : "Ku dar Lacag"}
                               >
-                                {student.feeRecord ? <FiEdit2 className="w-4 h-4" /> : <FiPlus className="w-4 h-4" />}
+                                {student.feeRecord ? (
+                                  <FiEdit2 className="w-4 h-4" />
+                                ) : (
+                                  <FiPlus className="w-4 h-4" />
+                                )}
                               </button>
-                              
+
                               {student.feeRecord && (
                                 <>
                                   <button
                                     onClick={() => togglePaymentStatus(student)}
-                                    className={`p-1 ${student.feeRecord.paid ? 'text-red-600 hover:text-red-800' : 'text-green-600 hover:text-green-800'}`}
-                                    title={student.feeRecord.paid ? "Mark as Unpaid" : "Mark as Paid"}
+                                    className={`p-1 ${
+                                      student.feeRecord.paid
+                                        ? "text-red-600 hover:text-red-800"
+                                        : "text-green-600 hover:text-green-800"
+                                    }`}
+                                    title={
+                                      student.feeRecord.paid
+                                        ? "U calaamadee sida aan la bixin"
+                                        : "U calaamadee sida la bixiyey"
+                                    }
                                   >
-                                    {student.feeRecord.paid ? <FiX className="w-4 h-4" /> : <FiCheck className="w-4 h-4" />}
+                                    {student.feeRecord.paid ? (
+                                      <FiX className="w-4 h-4" />
+                                    ) : (
+                                      <FiCheck className="w-4 h-4" />
+                                    )}
                                   </button>
-                                  
+
                                   <button
                                     onClick={() => handleDeleteFee(student.feeRecord._id)}
                                     className="p-1 text-red-600 hover:text-red-800"
-                                    title="Delete Fee"
+                                    title="Tirtir Lacagta"
                                   >
                                     <FiTrash2 className="w-4 h-4" />
                                   </button>
@@ -433,12 +455,11 @@ const FeeFile = () => {
             {filteredStudents.length === 0 && !loadingStudents && (
               <div className="text-center py-8 text-gray-500">
                 <FiUsers className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-                <p className="text-lg font-medium">No students found</p>
+                <p className="text-lg font-medium">Arday lama helin</p>
                 <p className="text-sm">
-                  {searchQuery || filterStatus !== 'all' 
-                    ? "Try adjusting your search or filter criteria."
-                    : "Please select a class to view students."
-                  }
+                  {searchQuery || filterStatus !== "all"
+                    ? "Fadlan wax ka beddel raadintaada ama shaandheynta."
+                    : "Fadlan dooro fasal si aad u aragto ardayda."}
                 </p>
               </div>
             )}
@@ -448,13 +469,13 @@ const FeeFile = () => {
         {/* Note Input (when editing) */}
         {editingStudent && (
           <div className="bg-white rounded-xl shadow-sm p-6 mt-6 border border-gray-100">
-            <h3 className="text-lg font-semibold mb-4">Additional Note</h3>
+            <h3 className="text-lg font-semibold mb-4">Fiiro Dheeraad ah</h3>
             <textarea
               value={feeForm.note}
-              onChange={(e) => setFeeForm({...feeForm, note: e.target.value})}
+              onChange={(e) => setFeeForm({ ...feeForm, note: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               rows="3"
-              placeholder="Optional note about this fee..."
+              placeholder="Qoraal ikhtiyaari ah oo ku saabsan lacagtan..."
             />
           </div>
         )}
