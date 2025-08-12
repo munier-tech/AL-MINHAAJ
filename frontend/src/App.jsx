@@ -256,7 +256,7 @@ function App() {
         element={
           <ProtectedRoute>
             <AdminRoute>
-              <GetAllUser />
+              <UserManagement />
             </AdminRoute>
           </ProtectedRoute>
         }

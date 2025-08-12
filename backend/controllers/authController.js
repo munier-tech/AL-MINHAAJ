@@ -130,7 +130,7 @@ export const getAllUser = async ( req , res ) => {
 export const updateUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { username, email, profilePicture } = req.body;
+    const { username, email, profilePicture , role} = req.body;
 
     if (!username || !email) {
       return res.status(400).json({ message: "Fadlan buuxi dhammaan meelaha looga baahan yahay" });
@@ -151,6 +151,7 @@ export const updateUser = async (req, res) => {
 
     user.username = username;
     user.email = email;
+    user.role  = role;
     user.profilePicture = cloudinaryResponse?.secure_url ? cloudinaryResponse?.secure_url : user.profilePicture;
 
     await user.save();

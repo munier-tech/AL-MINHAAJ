@@ -15,7 +15,7 @@ const useUsersStore = create((set, get) => ({
   fetchUsers: async () => {
     set({ loading: true })
     try {
-      const response = await axios.get('/auth/users')
+      const response = await axios.get('/auth')
       set({ 
         users: response.data.users || [],
         loading: false 
@@ -52,7 +52,7 @@ const useUsersStore = create((set, get) => ({
   updateUser: async (id, userData) => {
     set({ updating: true })
     try {
-      const response = await axios.put(`/auth/users/${id}`, userData)
+      const response = await axios.put(`/auth/update/${id}`, userData)
       const updatedUser = response.data.user
       
       set(state => ({
@@ -77,7 +77,7 @@ const useUsersStore = create((set, get) => ({
   deleteUser: async (id) => {
     set({ deleting: true })
     try {
-      await axios.delete(`/auth/users/${id}`)
+      await axios.delete(`/auth/delete/${id}`)
       
       set(state => ({
         users: state.users.filter(user => user._id !== id),

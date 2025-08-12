@@ -80,9 +80,22 @@ const modalVariants = {
 
 function UserManagement() {
   const { user: currentUser } = useAuthStore()
-  const { users, loading, creating, fetchUsers, createUser, deleteUser } = useUsersStore()
+  const { 
+    users, 
+    loading, 
+    creating, 
+    updating,
+    deleting,
+    fetchUsers, 
+    createUser, 
+    updateUser,
+    deleteUser,
+    selectedUser,
+    clearSelectedUser
+  } = useUsersStore()
   const [searchTerm, setSearchTerm] = useState('')
   const [showCreateForm, setShowCreateForm] = useState(false)
+  const [showEditForm, setShowEditForm] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [selectedRole, setSelectedRole] = useState('all')
 
@@ -91,12 +104,13 @@ function UserManagement() {
     handleSubmit,
     reset,
     formState: { errors },
+    setValue
   } = useForm({
     resolver: yupResolver(userSchema),
     defaultValues: {
       username: '',
       email: '',
-      password: '',
+      password: 'placeholder', // Add default password to bypass validation
       role: 'user',
     },
   })
@@ -105,7 +119,7 @@ function UserManagement() {
     fetchUsers()
   }, [])
 
-  const onSubmit = async (data) => {
+  const onSubmitCreate = async (data) => {
     try {
       await createUser(data)
       toast.success('Isticmaalaha si guul leh ayaa loo sameeyay!')
@@ -114,6 +128,31 @@ function UserManagement() {
     } catch (error) {
       toast.error('Qalad ayaa ka dhacay')
     }
+  }
+
+  const onSubmitUpdate = async (data) => {
+    try {
+      // Remove password if it's the placeholder
+      if (data.password === 'placeholder') {
+        delete data.password
+      }
+      
+      await updateUser(selectedUser._id, data)
+      toast.success('Isticmaalaha si guul leh ayaa loo cusboonaysiiyay!')
+      setShowEditForm(false)
+      clearSelectedUser()
+    } catch (error) {
+      toast.error('Qalad ayaa ka dhacay')
+    }
+  }
+
+  const handleEditUser = (user) => {
+    setValue('username', user.username)
+    setValue('email', user.email)
+    setValue('role', user.role)
+    setValue('password', 'placeholder') // Set placeholder password
+    useUsersStore.setState({ selectedUser: user })
+    setShowEditForm(true)
   }
 
   const handleDeleteUser = async (userId) => {
@@ -159,34 +198,7 @@ function UserManagement() {
     )
   }
 
-  // Mock data for demonstration
-  const mockUsers = [
-    {
-      _id: '1',
-      username: 'admin',
-      email: 'admin@alminhaaj.com',
-      role: 'admin',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      _id: '2',
-      username: 'teacher1',
-      email: 'teacher1@alminhaaj.com',
-      role: 'teacher',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      _id: '3',
-      username: 'user1',
-      email: 'user1@alminhaaj.com',
-      role: 'user',
-      createdAt: new Date().toISOString(),
-    },
-  ]
-
-  const displayUsers = users.length > 0 ? users : mockUsers
-  
-  const filteredUsers = displayUsers.filter(user => {
+  const filteredUsers = users.filter(user => {
     const matchesSearch = 
       user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -197,10 +209,10 @@ function UserManagement() {
   })
 
   const userStats = {
-    total: displayUsers.length,
-    admin: displayUsers.filter(u => u.role === 'admin').length,
-    teacher: displayUsers.filter(u => u.role === 'teacher').length,
-    user: displayUsers.filter(u => u.role === 'user').length,
+    total: users.length,
+    admin: users.filter(u => u.role === 'admin').length,
+    teacher: users.filter(u => u.role === 'teacher').length,
+    user: users.filter(u => u.role === 'user').length,
   }
 
   return (
@@ -400,14 +412,24 @@ function UserManagement() {
                       <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                         <div className="flex items-center justify-end space-x-2">
                           {currentUser?.role === 'admin' && user._id !== currentUser._id && (
-                            <motion.button
-                              onClick={() => handleDeleteUser(user._id)}
-                              className="text-red-600 hover:text-red-900 p-1 rounded"
-                              whileHover={{ scale: 1.1 }}
-                              whileTap={{ scale: 0.9 }}
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </motion.button>
+                            <>
+                              <motion.button
+                                onClick={() => handleEditUser(user)}
+                                className="text-blue-600 hover:text-blue-900 p-1 rounded"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Edit className="w-4 h-4" />
+                              </motion.button>
+                              <motion.button
+                                onClick={() => handleDeleteUser(user._id)}
+                                className="text-red-600 hover:text-red-900 p-1 rounded"
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.9 }}
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </motion.button>
+                            </>
                           )}
                         </div>
                       </td>
@@ -430,12 +452,13 @@ function UserManagement() {
               initial="hidden"
               animate="visible"
               exit="exit"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="px-6 py-4 border-b border-gray-200">
                 <h3 className="text-lg font-medium text-gray-900">Ku dar Isticmaale Cusub</h3>
               </div>
               
-              <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
+              <form onSubmit={handleSubmit(onSubmitCreate)} className="p-6 space-y-4">
                 {/* Username */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -602,6 +625,165 @@ function UserManagement() {
                       </>
                     ) : (
                       'Samee Isticmaalaha'
+                    )}
+                  </motion.button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* Edit User Modal */}
+      <AnimatePresence>
+        {showEditForm && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <motion.div
+              className="bg-white rounded-lg shadow-xl w-full max-w-md"
+              variants={modalVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="px-6 py-4 border-b border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900">Cusboonaysii Isticmaalaha</h3>
+              </div>
+              
+              <form onSubmit={handleSubmit(onSubmitUpdate)} className="p-6 space-y-4">
+                {/* Username */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Magaca Isticmaalaha
+                  </label>
+                  <Controller
+                    name="username"
+                    control={control}
+                    render={({ field }) => (
+                      <motion.input
+                        {...field}
+                        type="text"
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          errors.username ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="Geli magaca isticmaalaha"
+                        whileFocus={{ scale: 1.02 }}
+                      />
+                    )}
+                  />
+                  {errors.username && (
+                    <motion.p 
+                      className="mt-1 text-sm text-red-600"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.username.message}
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Email
+                  </label>
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <motion.input
+                        {...field}
+                        type="email"
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          errors.email ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        placeholder="Geli emailka"
+                        whileFocus={{ scale: 1.02 }}
+                      />
+                    )}
+                  />
+                  {errors.email && (
+                    <motion.p 
+                      className="mt-1 text-sm text-red-600"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.email.message}
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Password (Hidden but required for validation) */}
+                <div className="hidden">
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <input type="hidden" {...field} />
+                    )}
+                  />
+                </div>
+
+                {/* Role */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Doorka
+                  </label>
+                  <Controller
+                    name="role"
+                    control={control}
+                    render={({ field }) => (
+                      <motion.select
+                        {...field}
+                        className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
+                          errors.role ? 'border-red-300' : 'border-gray-300'
+                        }`}
+                        whileFocus={{ scale: 1.02 }}
+                      >
+                        <option value="teacher">Macallin</option>
+                        <option value="admin">Maamul</option>
+                      </motion.select>
+                    )}
+                  />
+                  {errors.role && (
+                    <motion.p 
+                      className="mt-1 text-sm text-red-600"
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                    >
+                      {errors.role.message}
+                    </motion.p>
+                  )}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex justify-end space-x-3 pt-4">
+                  <motion.button
+                    type="button"
+                    onClick={() => {
+                      setShowEditForm(false)
+                      clearSelectedUser()
+                    }}
+                    className="px-4 py-2 text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 transition-colors"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Jooji
+                  </motion.button>
+                  <motion.button
+                    type="submit"
+                    disabled={updating}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center"
+                    whileHover={{ scale: updating ? 1 : 1.05 }}
+                    whileTap={{ scale: updating ? 1 : 0.95 }}
+                  >
+                    {updating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                        Cusboonaysiinaayo...
+                      </>
+                    ) : (
+                      'Cusboonaysii Isticmaalaha'
                     )}
                   </motion.button>
                 </div>

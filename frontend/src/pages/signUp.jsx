@@ -6,6 +6,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { motion } from 'framer-motion'
 import useAuthStore from '../store/authStore'
+import toast from 'react-hot-toast'
 
 // Add role validation
 const schema = yup.object({
