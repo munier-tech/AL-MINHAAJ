@@ -187,7 +187,6 @@ function UserManagement() {
     const roleNames = {
       admin: 'Maamul',
       teacher: 'Macallin',
-      user: 'Isticmaale'
     }
     
     return (
@@ -212,7 +211,6 @@ function UserManagement() {
     total: users.length,
     admin: users.filter(u => u.role === 'admin').length,
     teacher: users.filter(u => u.role === 'teacher').length,
-    user: users.filter(u => u.role === 'user').length,
   }
 
   return (
@@ -223,21 +221,7 @@ function UserManagement() {
       animate="visible"
     >
       {/* Header */}
-      <motion.div className="flex items-center justify-between" variants={itemVariants}>
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Maamulka Isticmaalayaasha</h1>
-          <p className="text-gray-600 mt-1">Maamul isticmaalayaasha nidaamka iyo ogolaanshahooda</p>
-        </div>
-        <motion.button
-          onClick={() => setShowCreateForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <UserPlus className="w-4 h-4" />
-          Ku dar Isticmaale
-        </motion.button>
-      </motion.div>
+
 
       {/* Stats Cards */}
       <motion.div className="grid grid-cols-1 md:grid-cols-4 gap-6" variants={itemVariants}>
