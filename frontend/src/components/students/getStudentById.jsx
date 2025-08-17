@@ -172,6 +172,39 @@ const GetStudentById = () => {
     );
   }, [searchQuery, students, searchStudents]);
 
+  const handleSearchKeyDown = async (e) => {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+
+    const query = searchQuery.trim();
+    if (!query) return;
+
+    // If we have suggestions, pick the first one
+    if (filteredStudents.length > 0) {
+      await handleSelectStudent(filteredStudents[0]._id);
+      return;
+    }
+
+    // If query looks like a Mongo ObjectId, try fetching directly
+    const looksLikeObjectId = /^[a-fA-F0-9]{24}$/.test(query);
+    if (looksLikeObjectId) {
+      await handleSelectStudent(query);
+      return;
+    }
+
+    // Try to resolve by friendly studentId or last 6 of _id
+    const match = students.find(s =>
+      s.studentId?.toLowerCase() === query.toLowerCase() ||
+      String(s._id).slice(-6).toLowerCase() === query.toLowerCase()
+    );
+    if (match?._id) {
+      await handleSelectStudent(match._id);
+      return;
+    }
+
+    toast.error('Arday lama helin');
+  };
+
   // Student selection handler
   const handleSelectStudent = async (id) => {
     setIsSelecting(true);
@@ -552,6 +585,7 @@ const DisciplineTab = () => (
             className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearchKeyDown}
           />
         </div>
 

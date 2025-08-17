@@ -151,13 +151,32 @@ const useStudentsStore = create((set, get) => ({
   // <-- New searchStudents function -->
   searchStudents: (query) => {
     const { students } = get()
-    const lowerQuery = query.toLowerCase()
-    return students.filter(student =>
-      (student.name && student.name.toLowerCase().includes(lowerQuery)) ||
-      (student.email && student.email.toLowerCase().includes(lowerQuery)) ||
-      (student.phone && student.phone.includes(query)) ||
-      (student.class && student.class.name && student.class.name.toLowerCase().includes(lowerQuery))
-    )
+    const normalizedQuery = String(query || '').toLowerCase().trim()
+    if (!normalizedQuery) return students
+
+    return students.filter((student) => {
+      const nameMatch = student.fullname?.toLowerCase().includes(normalizedQuery)
+      const studentIdMatch = student.studentId?.toLowerCase().includes(normalizedQuery)
+      const objectId = student._id ? String(student._id) : ''
+      const objectIdMatch = objectId.toLowerCase().includes(normalizedQuery) ||
+        objectId.slice(-6).toLowerCase().includes(normalizedQuery)
+      const motherMatch = String(student.motherNumber || '').toLowerCase().includes(normalizedQuery)
+      const fatherMatch = String(student.fatherNumber || '').toLowerCase().includes(normalizedQuery)
+      const classMatch = student.class?.name?.toLowerCase().includes(normalizedQuery)
+      const ageMatch = String(student.age ?? '').toLowerCase().includes(normalizedQuery)
+      const genderMatch = student.gender?.toLowerCase().startsWith(normalizedQuery)
+
+      return (
+        nameMatch ||
+        studentIdMatch ||
+        objectIdMatch ||
+        motherMatch ||
+        fatherMatch ||
+        classMatch ||
+        ageMatch ||
+        genderMatch
+      )
+    })
   },
 }));
 
