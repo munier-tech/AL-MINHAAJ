@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import useStudentsStore from '../../store/studentsStore';
 import useClassesStore from '../../store/classesStore';
+import { useHealthStore } from '../../store/healthStore';
 
 // Animation variants
 const containerVariants = {
@@ -32,6 +33,7 @@ const CreateStudent = () => {
   const navigate = useNavigate();
   const { createStudent, loading } = useStudentsStore();
   const { classes } = useClassesStore();
+  const { addHealthRecord } = useHealthStore();
 
   const [formData, setFormData] = useState({
     fullname: '',
@@ -44,6 +46,13 @@ const CreateStudent = () => {
       total: '',
       paid: ''
     }
+  });
+
+  const [healthData, setHealthData] = useState({
+    date: '',
+    condition: '',
+    treated: false,
+    note: ''
   });
 
   const handleChange = (e) => {
@@ -62,11 +71,31 @@ const CreateStudent = () => {
     }
   };
 
+  const handleHealthChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setHealthData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { success } = await createStudent(formData);
+      const { success, student } = await createStudent(formData);
       if (success) {
+        // If health fields are provided, create health record immediately
+        if (healthData.condition && healthData.date) {
+          try {
+            await addHealthRecord({
+              student: student._id,
+              date: healthData.date,
+              condition: healthData.condition,
+              treated: !!healthData.treated,
+              note: healthData.note
+            });
+          } catch (err) {
+            // Non-blocking: notify but continue navigation
+            toast.error('Xogta caafimaadka lama kaydin, fadlan isku day mar kale.');
+          }
+        }
         toast.success('Ardayga si guul leh ayaa loo sameeyay');
         navigate('/getAllStudents');
       }
@@ -107,7 +136,6 @@ const CreateStudent = () => {
             {/* Basic Information */}
             <motion.div className="space-y-4" variants={itemVariants}>
               <h2 className="text-lg font-semibold text-gray-700">Macluumaadka Aasaasiga ah</h2>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Magaca Dhan</label>
                 <motion.input
@@ -121,7 +149,6 @@ const CreateStudent = () => {
                   whileFocus={{ scale: 1.02 }}
                 />
               </div>
-              
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Da'da</label>
@@ -137,7 +164,6 @@ const CreateStudent = () => {
                     whileFocus={{ scale: 1.02 }}
                   />
                 </div>
-                
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Jinsiga</label>
                   <motion.select
@@ -152,7 +178,6 @@ const CreateStudent = () => {
                   </motion.select>
                 </div>
               </div>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Fasalka</label>
                 <motion.select
@@ -170,10 +195,9 @@ const CreateStudent = () => {
               </div>
             </motion.div>
 
-            {/* Contact and Fee Information */}
+            {/* Contact and Health Information */}
             <motion.div className="space-y-4" variants={itemVariants}>
               <h2 className="text-lg font-semibold text-gray-700">Macluumaadka Xiriirka</h2>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Lambarka Hooyo</label>
                 <motion.input
@@ -187,7 +211,6 @@ const CreateStudent = () => {
                   whileFocus={{ scale: 1.02 }}
                 />
               </div>
-              
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Lambarka Aabo</label>
                 <motion.input
@@ -202,7 +225,53 @@ const CreateStudent = () => {
                 />
               </div>
 
-            
+              {/* Embedded Health Section */}
+              <div className="mt-6 border-t pt-4">
+                <h3 className="text-md font-semibold text-gray-700 mb-2">Xogta Caafimaadka (Ikhtiyaari)</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Taariikhda</label>
+                    <input
+                      type="date"
+                      name="date"
+                      value={healthData.date}
+                      onChange={handleHealthChange}
+                      className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Xaaladda</label>
+                    <input
+                      type="text"
+                      name="condition"
+                      value={healthData.condition}
+                      onChange={handleHealthChange}
+                      className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      placeholder="Geli xaaladda caafimaad"
+                    />
+                  </div>
+                </div>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Fiiro Gaar Ah</label>
+                  <textarea
+                    name="note"
+                    value={healthData.note}
+                    onChange={handleHealthChange}
+                    className="w-full border rounded-md p-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-24"
+                    placeholder="Ku dar qoraallo faahfaahsan (ikhtiyaari)"
+                  />
+                </div>
+                <div className="mt-2 flex items-center">
+                  <input
+                    type="checkbox"
+                    name="treated"
+                    checked={healthData.treated}
+                    onChange={handleHealthChange}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  />
+                  <label className="ml-2 text-sm text-gray-700">La daweeyey?</label>
+                </div>
+              </div>
             </motion.div>
           </div>
 

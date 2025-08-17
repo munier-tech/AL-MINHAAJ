@@ -44,6 +44,7 @@ import GetAllFinance from './components/finance/GetAllFinance';
 import GetFinanceById from './components/finance/GetFinanceById';
 import GenerateMonthlyFinance from './components/finance/GenerateMonthlyFinance';
 import FinanceSummary from './components/finance/FinanceSummary';
+import FamilyFees from './fees/FamilyFees';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -390,6 +391,16 @@ function App() {
           <ProtectedRoute>
             <AdminRoute>
             <FeeFile/>
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/familyFees"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <FamilyFees/>
             </AdminRoute>
           </ProtectedRoute>
         }

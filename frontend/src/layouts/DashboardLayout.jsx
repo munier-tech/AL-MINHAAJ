@@ -108,6 +108,7 @@ const menuItems = [
       { text: 'Xogta Imtixinaadka', path: '/studentExams', icon: BookCheck },
       { text: 'Xogta Anshaxa', path: '/studentdiscipline', icon: Gavel },
       { text: 'Lacagta Ardayga', path: '/studentFees', icon: DollarSign },
+      { text: 'Lacagta Qoyska', path: '/familyFees', icon: Wallet },
     ]
   },
   {
