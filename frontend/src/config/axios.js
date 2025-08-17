@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 // Get base URL from environment variables or default to localhost
 // In production (Vercel), use relative path to same domain; in development, use localhost
 const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 
-  (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api')
+  (import.meta.env.PROD ? '/api' : 'http://localhost:4000/api')
 
 console.log('Environment:', import.meta.env.MODE)
 console.log('Base URL:', BASE_URL)
