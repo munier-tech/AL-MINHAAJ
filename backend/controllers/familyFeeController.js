@@ -18,8 +18,8 @@ export const createFamilyFee = async (req, res) => {
     }
 
     // Enforce limit of 5 students per family
-    if (students.length > 5) {
-      return res.status(400).json({ message: "A family fee can include at most 5 students" });
+    if (students.length > 15) {
+      return res.status(400).json({ message: "A family fee can include at most 15 students" });
     }
 
     // Check if family fee already exists for this month/year

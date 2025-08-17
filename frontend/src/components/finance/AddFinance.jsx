@@ -91,7 +91,7 @@ const AddFinance = () => {
               Ku dar Maalgelin Cusub
             </h1>
             <p className="text-green-100 mt-1">
-              Geli macluumaadka maalgelinta cusub
+              Geli macluumaadka Dhaqaale cusub
             </p>
           </div>
 
@@ -208,7 +208,7 @@ const AddFinance = () => {
                 ) : (
                   <>
                     <FiPlus className="mr-2" />
-                    Ku dar Maalgelin
+                    Ku dar Dhaqaale
                   </>
                 )}
               </button>

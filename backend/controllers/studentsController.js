@@ -1,4 +1,5 @@
 import Student from "../models/studentsModel.js";
+import Class from "../models/classModel.js";
 
 // 1. Abuur Arday
 export const createStudent = async (req, res) => {
@@ -28,7 +29,14 @@ export const createStudent = async (req, res) => {
     });
 
     await student.save();
-    res.status(201).json({ message: "Arday si guul leh ayaa loo abuuray", student });
+
+    // If class provided, also add student to Class.students array
+    if (classId) {
+      await Class.findByIdAndUpdate(classId, { $addToSet: { students: student._id } });
+    }
+
+    const populated = await Student.findById(student._id).populate("class");
+    res.status(201).json({ message: "Arday si guul leh ayaa loo abuuray", student: populated });
   } catch (error) {
     console.error("Error in createStudent:", error);
     res.status(500).json({ message: error.message });
@@ -106,15 +114,29 @@ export const getStudentsByClass = async (req, res) => {
 export const updateStudent = async (req, res) => {
   try {
     const { studentId } = req.params;
-    const { fullname, age, gender, classId, motherNumber, fatherNumber } = req.body;
+    const { fullname, age, gender, motherNumber, fatherNumber } = req.body;
+    const newClassId = req.body.classId || req.body.class || null;
+
+    const prevStudent = await Student.findById(studentId);
+    if (!prevStudent) return res.status(404).json({ message: "Arday lama helin" });
 
     const updated = await Student.findByIdAndUpdate(
       studentId,
-      { fullname, age, gender, class: classId, motherNumber, fatherNumber },
+      { fullname, age, gender, class: newClassId, motherNumber, fatherNumber },
       { new: true }
-    );
+    ).populate("class");
 
-    if (!updated) return res.status(404).json({ message: "Arday lama helin" });
+    // Sync Class.students if class changed
+    const prevClassId = prevStudent.class ? String(prevStudent.class) : null;
+    const nextClassId = newClassId ? String(newClassId) : null;
+    if (prevClassId !== nextClassId) {
+      if (prevClassId) {
+        await Class.findByIdAndUpdate(prevClassId, { $pull: { students: studentId } });
+      }
+      if (nextClassId) {
+        await Class.findByIdAndUpdate(nextClassId, { $addToSet: { students: studentId } });
+      }
+    }
 
     res.status(200).json({ message: "Macluumaadka ardayga waa la cusboonaysiiyay", student: updated });
   } catch (error) {
@@ -130,6 +152,11 @@ export const deleteStudent = async (req, res) => {
 
     if (!deleted) return res.status(404).json({ message: "Arday lama helin" });
 
+    // Remove from class if present
+    if (deleted.class) {
+      await Class.findByIdAndUpdate(deleted.class, { $pull: { students: studentId } });
+    }
+
     res.status(200).json({ message: "Ardayga si guul leh ayaa loo tirtiray" });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -141,13 +168,22 @@ export const assignStudentToClass = async (req, res) => {
   try {
     const { studentId, classId } = req.params;
 
-    const student = await Student.findByIdAndUpdate(
-      studentId,
-      { class: classId },
-      { new: true }
-    );
+    const student = await Student.findById(studentId);
+    if (!student) return res.status(404).json({ message: "Arday lama helin" });
 
-    res.status(200).json({ message: "Fasalka ayaa loo qoondeeyay ardayga", student });
+    const prevClassId = student.class ? String(student.class) : null;
+
+    student.class = classId;
+    await student.save();
+
+    // Update class membership arrays
+    if (prevClassId && prevClassId !== String(classId)) {
+      await Class.findByIdAndUpdate(prevClassId, { $pull: { students: studentId } });
+    }
+    const updatedClass = await Class.findByIdAndUpdate(classId, { $addToSet: { students: studentId } }, { new: true });
+
+    const populatedStudent = await Student.findById(studentId).populate("class");
+    res.status(200).json({ message: "Fasalka ayaa loo qoondeeyay ardayga", student: populatedStudent, class: updatedClass });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

@@ -62,7 +62,7 @@ const menuItems = [
   {
     text: 'Macalimiinta',
     icon: GraduationCap,
-    path: '/teachers',
+    path: '/getAllTeachers',
         subItems: [
       { text: 'Dhamaan Macalimiinta', path: '/getAllTeachers', icon: Users },
       { text: 'Ku Biiri Macalin Cusub', path: '/addTeachers', icon: PlusCircle },
@@ -83,7 +83,7 @@ const menuItems = [
   {
     text: 'Imtixaanaadka',
     icon: ClipboardList,
-    path: '/exams',
+    path: '/allExams',
     subItems: [
       { text: 'Dhamaan Imtixinaadka Class yada', path: '/allExams', icon: BookCheck },
       { text: 'Gali imtixaan Arday Khaasa', path: '/addExams', icon: PlusCircle },
@@ -93,7 +93,7 @@ const menuItems = [
   {
     text: 'Maadooyinka',
     icon: BookKey,
-    path: '/subjects',
+    path: '/AllSubjects',
     subItems: [
       { text: 'Dhamaan Maadooyinka', path: '/AllSubjects', icon: BookOpen },
       { text: 'Abuur Maado Cusub', path: '/AddSubjects', icon: PlusCircle },
@@ -102,13 +102,20 @@ const menuItems = [
   {
     text: 'Arimaha Ardayga',
     icon: User2,
-    path: '/student-affairs',
+    path: '/studentHealth',
         subItems: [
       { text: 'Xogta Caafimadka', path: '/studentHealth', icon: HeartPulse },
       { text: 'Xogta Imtixinaadka', path: '/studentExams', icon: BookCheck },
       { text: 'Xogta Anshaxa', path: '/studentdiscipline', icon: Gavel },
-      { text: 'Lacagta Ardayga', path: '/studentFees', icon: DollarSign },
-      { text: 'Lacagta Qoyska', path: '/familyFees', icon: Wallet },
+    ]
+  },
+  {
+    text: 'Arimaha Fee ga',
+    icon: User2,
+    path: '/studentFees',
+        subItems: [
+      { text: 'Fee ga Ardayga', path: '/studentFees', icon: DollarSign },
+      { text: 'Fee ga Qoyska', path: '/familyFees', icon: Wallet },
     ]
   },
   {
@@ -118,7 +125,6 @@ const menuItems = [
     subItems: [
       { text: 'Raadi Xaadiriska', path: '/AttendanceByDate', icon: FileSearch },
       { text: 'Abuur Xaadirska Fasalka', path: '/createAttendance', icon: ClipboardCheck },
-      { text: 'Reports', path: '/attendance/reports', icon: FileBarChart2 },
     ]
   },
     {
@@ -195,8 +201,11 @@ function DashboardLayout({ children }) {
     <div className="flex flex-col h-full bg-gray-900 text-gray-100">
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-700">
         <div className="flex items-center space-x-3">
-                      <img src="/minhaaj.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
-            <span className="text-xl font-bold text-white">AL-MINHAAJ</span>
+            <img src="/minhaaj.jpg" alt="Logo" className='h-8 w-8 rounded-full' />
+<div className='grid'>
+            <span className="text-xl font-bold text-white">MARAAKIS </span>
+            <span className="text-xl font-bold text-white"> AL-MINHAAJ</span>
+</div>
         </div>
         <button
           onClick={() => setSidebarOpen(false)}

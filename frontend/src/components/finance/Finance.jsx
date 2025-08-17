@@ -44,8 +44,8 @@ const Finance = () => {
 
   const getMonthName = (monthNum) => {
     const months = [
-      'Janaayo', 'Febraayo', 'Maarso', 'Abriil', 'Maajo', 'Juun',
-      'Luuliyo', 'Agoosto', 'Sebtembar', 'Oktoobar', 'Nofembar', 'Diseembar'
+      'january', 'February', 'March', 'April', 'May', 'Juun',
+      'July', 'Agoosto', 'Sebtembar', 'Oktoobar', 'Nofembar', 'Diseembar'
     ];
     return months[monthNum - 1];
   };
@@ -80,7 +80,7 @@ const Finance = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <FiDollarSign className="mr-3 text-green-600" />
-            Maamulka Maalgelinta
+            Maamulka Dhaqaalaha
           </h1>
           <p className="text-gray-600 mt-2">
             Eeg iyo maamul maalgelinta iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
@@ -131,7 +131,7 @@ const Finance = () => {
                 ) : (
                   <>
                     <FiRefreshCw className="mr-2" />
-                    Abuur Maalgelin
+                    Abuur DHaqaale
                   </>
                 )}
               </button>
@@ -211,7 +211,7 @@ const Finance = () => {
         {financeSummary && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Faahfaahinta Maalgelinta {getMonthName(financeSummary.month)} {financeSummary.year}
+              Faahfaahinta Dhaqaalaha {getMonthName(financeSummary.month)} {financeSummary.year}
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="text-center">
@@ -249,7 +249,7 @@ const Finance = () => {
         {yearlyBreakdown && showMonthlyBreakdown && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Faahfaahinta Maalgelinta Sanadka {yearlyBreakdown.year}
+              Faahfaahinta Dhaqaalaha Sanadka {yearlyBreakdown.year}
             </h3>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200">
@@ -311,7 +311,7 @@ const Finance = () => {
             className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 flex items-center"
           >
             <FiPlus className="mr-2" />
-            Ku dar Maalgelin
+            Ku dar Dhaqaale
           </Link>
           <Link
             to="/finance/getAll"
@@ -325,7 +325,7 @@ const Finance = () => {
         {/* Recent Finances */}
         <div className="bg-white rounded-lg shadow-md">
           <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">Maalgelinta Dhowaan</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Dhaqaalaha Dhowaan</h3>
           </div>
           <div className="overflow-x-auto">
             {loading ? (
@@ -413,7 +413,7 @@ const Finance = () => {
                 to="/finance/getAll"
                 className="text-blue-600 hover:text-blue-900 text-sm font-medium flex items-center"
               >
-                Eeg dhammaan maalgelinta
+                Eeg dhammaan Dhaqaalaha
                 <FiEye className="ml-1" />
               </Link>
             </div>

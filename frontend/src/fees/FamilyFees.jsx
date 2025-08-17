@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { FiUsers, FiCalendar, FiPlus, FiSearch, FiXCircle, FiDollarSign, FiCheck, FiTrash2, FiEdit2 } from "react-icons/fi";
+import { useEffect, useMemo, useState } from "react";
+import { FiUsers, FiPlus, FiSearch, FiXCircle, FiDollarSign, FiCheck, FiTrash2 } from "react-icons/fi";
 import useStudentsStore from "../store/studentsStore";
 import { useFamilyFeeStore } from "../store/familyFeeStore";
 
 const FamilyFees = () => {
-  const { students, fetchStudents } = useStudentsStore();
+  const { students, fetchStudents, searchStudents } = useStudentsStore();
   const { 
     familyFees, 
     loading, 
@@ -31,6 +31,7 @@ const FamilyFees = () => {
     note: ""
   });
 
+  const [studentSearchQuery, setStudentSearchQuery] = useState("");
   const [payment, setPayment] = useState({
     targetId: null,
     paidAmount: "",
@@ -52,10 +53,28 @@ const FamilyFees = () => {
     getAllFamilyFees(params);
   }, [filters.month, filters.year, filters.paid, filters.familyName, getAllFamilyFees]);
 
+  // Calculate totals
+  const { totalPaid, totalRemaining } = useMemo(() => {
+    let paid = 0;
+    let remaining = 0;
+    
+    familyFees.forEach(fee => {
+      paid += fee.paidAmount || 0;
+      remaining += Math.max((fee.totalAmount || 0) - (fee.paidAmount || 0), 0);
+    });
+    
+    return { totalPaid: paid, totalRemaining: remaining };
+  }, [familyFees]);
+
+  // Filter students based on search query
+  const filteredStudents = useMemo(() => {
+    return searchStudents(studentSearchQuery);
+  }, [students, studentSearchQuery, searchStudents]);
+
   const handleSelectStudent = (student) => {
     if (form.selectedStudents.find(s => s.student === student._id)) return;
-    if (form.selectedStudents.length >= 5) {
-      alert("Qoys kastaa ugu badnaan 5 arday");
+    if (form.selectedStudents.length >= 15) {
+      alert("Qoys kastaa ugu badnaan 15 arday");
       return;
     }
     setForm(prev => ({
@@ -73,6 +92,7 @@ const FamilyFees = () => {
 
   const resetForm = () => {
     setForm({ familyName: "", selectedStudents: [], totalAmount: "", dueDate: "", note: "" });
+    setStudentSearchQuery("");
   };
 
   const handleCreate = async () => {
@@ -124,7 +144,7 @@ const FamilyFees = () => {
             </div>
             <h1 className="text-3xl font-bold">Lacagta Qoyska</h1>
           </div>
-          <p className="mt-1 text-sm opacity-90">Qoys hal mar uga bixi lacagta ugu badnaan 5 arday.</p>
+          <p className="mt-1 text-sm opacity-90">Qoys hal mar uga bixi lacagta </p>
         </div>
 
         {/* Filters */}
@@ -175,6 +195,34 @@ const FamilyFees = () => {
                 <option value="true">La bixiyey</option>
                 <option value="false">Harsan</option>
               </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Summary Section */}
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6 border border-gray-100">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-green-800">Wadarta Lacagta La Bixiyey</h3>
+                  <p className="text-2xl font-bold text-green-900">{totalPaid.toLocaleString()}$</p>
+                </div>
+                <div className="p-2 bg-green-100 rounded-full">
+                  <FiCheck className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </div>
+            <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-orange-800">Wadarta Lacagta Harsan</h3>
+                  <p className="text-2xl font-bold text-orange-900">{totalRemaining.toLocaleString()}$</p>
+                </div>
+                <div className="p-2 bg-orange-100 rounded-full">
+                  <FiDollarSign className="w-6 h-6 text-orange-600" />
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -234,9 +282,22 @@ const FamilyFees = () => {
 
           {/* Students selector */}
           <div className="mt-6">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Ku dar Arday (ugu badnaan 5)</label>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-              {students.map(st => {
+            <label className="block text-sm font-medium text-gray-700 mb-2">Ku dar Arday (ugu badnaan 15)</label>
+            
+            {/* Student search input */}
+            <div className="relative mb-4">
+              <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <input
+                type="text"
+                value={studentSearchQuery}
+                onChange={(e) => setStudentSearchQuery(e.target.value)}
+                placeholder="Raadi ardayga"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg mb-4"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
+              {filteredStudents.map(st => {
                 const isSelected = form.selectedStudents.some(s => s.student === st._id);
                 return (
                   <div key={st._id} className={`flex items-center justify-between p-3 border rounded-lg ${isSelected ? 'bg-green-50 border-green-300' : 'bg-white'}`}>
@@ -297,11 +358,14 @@ const FamilyFees = () => {
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {f.students?.map(s => (
-                            <span key={s.student?._id || s.student} className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">
-                              {s.student?.firstName ? `${s.student.firstName} ${s.student.lastName || ''}` : s.student?.studentId || 'Student'}
-                            </span>
-                          ))}
+                          {f.students?.map(s => {
+                            const student = students.find(st => st._id === s.student);
+                            return (
+                              <span key={s.student} className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">
+                                {student ? student.fullname : 'Student not found'}
+                              </span>
+                            );
+                          })}
                         </div>
                       </td>
                       <td className="px-6 py-4">{f.totalAmount}</td>
