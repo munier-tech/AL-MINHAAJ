@@ -36,6 +36,7 @@ import HealthFile from './health/HealthFile';
 import FeeFile from './fees/FeeFile';
 import SalaryFile from './salaries/SalaryFile';
 import StudentExams from './components/students/StudentExams';
+import FamilyFees from './components/fees/FamilyFees';
 
 // Finance Components
 import Finance from './components/finance/Finance';

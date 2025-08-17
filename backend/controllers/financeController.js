@@ -62,14 +62,7 @@ export const generateMonthlyFinance = async (req, res) => {
       }
     ]);
 
-    // Include Family Fees paid amounts as income
-    const familyPaidResult = await FamilyFee.aggregate([
-      { $match: { month: monthNum, year: yearNum } },
-      { $group: { _id: null, total: { $sum: "$paidAmount" } } }
-    ]);
-
-    const totalIncome = (studentFeesResult.length > 0 ? studentFeesResult[0].total : 0)
-                      + (familyPaidResult.length > 0 ? familyPaidResult[0].total : 0);
+    const totalIncome = studentFeesResult.length > 0 ? studentFeesResult[0].total : 0;
     const paidFeesCount = studentFeesResult.length > 0 ? studentFeesResult[0].count : 0;
 
     // Calculate total teacher salaries (expenses) for the month
@@ -111,16 +104,7 @@ export const generateMonthlyFinance = async (req, res) => {
       }
     ]);
 
-    // Include Family Fees remaining amounts as debt
-    const familyDebtResult = await FamilyFee.aggregate([
-      { $match: { month: monthNum, year: yearNum } },
-      { $project: { remaining: { $subtract: ["$totalAmount", { $ifNull: ["$paidAmount", 0] }] } } },
-      { $match: { remaining: { $gt: 0 } } },
-      { $group: { _id: null, total: { $sum: "$remaining" } } }
-    ]);
-
-    const totalDebt = (unpaidFeesResult.length > 0 ? unpaidFeesResult[0].total : 0)
-                    + (familyDebtResult.length > 0 ? familyDebtResult[0].total : 0);
+    const totalDebt = unpaidFeesResult.length > 0 ? unpaidFeesResult[0].total : 0;
     const unpaidFeesCount = unpaidFeesResult.length > 0 ? unpaidFeesResult[0].count : 0;
 
     // Check if finance record already exists for this month
@@ -214,12 +198,6 @@ export const getFinanceSummary = async (req, res) => {
       }
     ]);
 
-    // Family fees income
-    const familyPaidTotal = await FamilyFee.aggregate([
-      { $match: { month: monthNum, year: yearNum } },
-      { $group: { _id: null, total: { $sum: "$paidAmount" } } }
-    ]);
-
     // Get total teacher salaries for the month (expenses)
     const teacherSalariesTotal = await Salary.aggregate([
       { 
@@ -256,13 +234,6 @@ export const getFinanceSummary = async (req, res) => {
       }
     ]);
 
-    const familyDebtTotal = await FamilyFee.aggregate([
-      { $match: { month: monthNum, year: yearNum } },
-      { $project: { remaining: { $subtract: ["$totalAmount", { $ifNull: ["$paidAmount", 0] }] } } },
-      { $match: { remaining: { $gt: 0 } } },
-      { $group: { _id: null, total: { $sum: "$remaining" } } }
-    ]);
-
     // Get manual finance records for the month
     const startDate = new Date(yearNum, monthNum - 1, 1);
     const endDate = new Date(yearNum, monthNum, 0);
@@ -282,21 +253,21 @@ export const getFinanceSummary = async (req, res) => {
     const summary = {
       month: monthNum,
       year: yearNum,
-      income: (studentFeesTotal.length > 0 ? studentFeesTotal[0].total : 0) + (familyPaidTotal.length > 0 ? familyPaidTotal[0].total : 0),
+      income: studentFeesTotal.length > 0 ? studentFeesTotal[0].total : 0,
       expenses: teacherSalariesTotal.length > 0 ? teacherSalariesTotal[0].total : 0,
-      debt: (unpaidFeesTotal.length > 0 ? unpaidFeesTotal[0].total : 0) + (familyDebtTotal.length > 0 ? familyDebtTotal[0].total : 0),
+      debt: unpaidFeesTotal.length > 0 ? unpaidFeesTotal[0].total : 0,
       paidFeesCount: studentFeesTotal.length > 0 ? studentFeesTotal[0].count : 0,
       paidSalariesCount: teacherSalariesTotal.length > 0 ? teacherSalariesTotal[0].count : 0,
       unpaidFeesCount: unpaidFeesTotal.length > 0 ? unpaidFeesTotal[0].count : 0,
       manualFinance,
       autoFinance,
-      netProfit: ((studentFeesTotal.length > 0 ? studentFeesTotal[0].total : 0) + (familyPaidTotal.length > 0 ? familyPaidTotal[0].total : 0)) - 
+      netProfit: (studentFeesTotal.length > 0 ? studentFeesTotal[0].total : 0) - 
                  (teacherSalariesTotal.length > 0 ? teacherSalariesTotal[0].total : 0)
     };
 
     return res.status(200).json({ 
       message: "Faahfaahinta maalgelinta si guul leh ayaa loo helay", 
-      summary 
+      summary: { ...summary, manualFinance, autoFinance }
     });
   } catch (error) {
     console.error("error in getFinanceSummary function: ", error);
@@ -333,13 +304,6 @@ export const getYearlyFinanceBreakdown = async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    // Include monthly Family Fees income
-    const monthlyFamilyPaid = await FamilyFee.aggregate([
-      { $match: { year: yearNum } },
-      { $group: { _id: "$month", total: { $sum: "$paidAmount" } } },
-      { $sort: { _id: 1 } }
-    ]);
-
     // Get monthly breakdown of teacher salaries
     const monthlySalaries = await Salary.aggregate([
       { 
@@ -358,7 +322,7 @@ export const getYearlyFinanceBreakdown = async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    // Get monthly breakdown of unpaid fees
+    // Get monthly breakdown of unpaid fees (students)
     const monthlyUnpaidFees = await Fee.aggregate([
       { 
         $match: { 
@@ -376,33 +340,22 @@ export const getYearlyFinanceBreakdown = async (req, res) => {
       { $sort: { _id: 1 } }
     ]);
 
-    // Include monthly Family Fees debt
-    const monthlyFamilyDebt = await FamilyFee.aggregate([
-      { $match: { year: yearNum } },
-      { $project: { month: 1, remaining: { $subtract: ["$totalAmount", { $ifNull: ["$paidAmount", 0] }] } } },
-      { $match: { remaining: { $gt: 0 } } },
-      { $group: { _id: "$month", total: { $sum: "$remaining" } } },
-      { $sort: { _id: 1 } }
-    ]);
-
     // Create monthly breakdown
     const monthlyBreakdown = [];
     for (let month = 1; month <= 12; month++) {
       const feesData = monthlyFees.find(f => f._id === month) || { total: 0, count: 0 };
-      const familyPaidData = monthlyFamilyPaid.find(f => f._id === month) || { total: 0 };
       const salariesData = monthlySalaries.find(s => s._id === month) || { total: 0, count: 0 };
       const unpaidData = monthlyUnpaidFees.find(u => u._id === month) || { total: 0, count: 0 };
-      const familyDebtData = monthlyFamilyDebt.find(u => u._id === month) || { total: 0 };
 
       monthlyBreakdown.push({
         month,
-        income: (feesData.total || 0) + (familyPaidData.total || 0),
+        income: feesData.total,
         expenses: salariesData.total,
-        debt: (unpaidData.total || 0) + (familyDebtData.total || 0),
+        debt: unpaidData.total,
         paidFeesCount: feesData.count,
         paidSalariesCount: salariesData.count,
         unpaidFeesCount: unpaidData.count,
-        netProfit: ((feesData.total || 0) + (familyPaidData.total || 0)) - salariesData.total
+        netProfit: feesData.total - salariesData.total
       });
     }
 
@@ -411,9 +364,9 @@ export const getYearlyFinanceBreakdown = async (req, res) => {
       yearlyBreakdown: {
         year: yearNum,
         monthlyBreakdown,
-        totalIncome: monthlyBreakdown.reduce((sum, m) => sum + (m.income || 0), 0),
-        totalExpenses: monthlyBreakdown.reduce((sum, m) => sum + (m.expenses || 0), 0),
-        totalDebt: monthlyBreakdown.reduce((sum, m) => sum + (m.debt || 0), 0),
+        totalIncome: monthlyFees.reduce((sum, f) => sum + f.total, 0),
+        totalExpenses: monthlySalaries.reduce((sum, s) => sum + s.total, 0),
+        totalDebt: monthlyUnpaidFees.reduce((sum, u) => sum + u.total, 0),
         totalPaidFees: monthlyFees.reduce((sum, f) => sum + f.count, 0),
         totalPaidSalaries: monthlySalaries.reduce((sum, s) => sum + s.count, 0),
         totalUnpaidFees: monthlyUnpaidFees.reduce((sum, u) => sum + u.count, 0)
