@@ -14,7 +14,7 @@ const FamilyFees = () => {
     clearError
   } = useFamilyFeeStore();
 
-  const { students, fetchStudents } = useStudentsStore();
+  const { students, fetchStudents, searchStudents } = useStudentsStore();
 
   const [form, setForm] = useState({
     familyName: '',
@@ -37,14 +37,8 @@ const FamilyFees = () => {
   }, [fetchStudents, getAllFamilyFees]);
 
   const filteredStudents = useMemo(() => {
-    if (!search.trim()) return students;
-    const q = search.toLowerCase();
-    return students.filter(s =>
-      s.fullname?.toLowerCase().includes(q) ||
-      s.studentId?.toLowerCase().includes(q) ||
-      String(s._id).toLowerCase().includes(q)
-    );
-  }, [students, search]);
+    return search.trim() ? searchStudents(search) : students;
+  }, [students, search, searchStudents]);
 
   const toggleStudent = (id) => {
     setForm((prev) => {
@@ -222,7 +216,23 @@ const FamilyFees = () => {
                 {familyFees.map((fee) => (
                   <tr key={fee._id} className="hover:bg-gray-50">
                     <td className="px-4 py-2 font-medium">{fee.familyName}</td>
-                    <td className="px-4 py-2 text-sm text-gray-600">{fee.students?.length || 0}</td>
+                    <td className="px-4 py-2 text-sm text-gray-600">
+                      {fee.students && fee.students.length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {fee.students.map((entry, idx) => (
+                            <span
+                              key={(entry.student && entry.student._id) || `${fee._id}-stu-${idx}`}
+                              className="px-2 py-0.5 bg-gray-100 border border-gray-200 rounded text-xs text-gray-700"
+                              title={entry.student?.studentId || ''}
+                            >
+                              {entry.student?.fullname || 'Unknown'}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        '-'
+                      )}
+                    </td>
                     <td className="px-4 py-2">${fee.totalAmount || 0}</td>
                     <td className="px-4 py-2">${fee.paidAmount || 0}</td>
                     <td className="px-4 py-2 font-semibold">${remaining(fee)}</td>
