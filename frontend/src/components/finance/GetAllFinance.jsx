@@ -69,10 +69,10 @@ const GetAllFinance = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <FiDollarSign className="mr-3 text-green-600" />
-            Maalgelinta Guud
+            Dhaqaalaha Guud
           </h1>
           <p className="text-gray-600 mt-2">
-            Eeg dhammaan macluumaadka maalgelinta
+            Eeg dhammaan macluumaadka dhaqaalaha
           </p>
         </div>
 
@@ -138,20 +138,20 @@ const GetAllFinance = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Raadi maalgelinta..."
+                placeholder="Raadi dhaqaalaha..."
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
             
             {finances.length > 0 && (
               <PrintButton
-                title="Qoraal Maalgelinta"
+                title="Qoraal Dhaqaalaha"
                 subtitle={`Wadarta: ${formatCurrency(totalIncome)} | Kharashka: ${formatCurrency(totalExpenses)} | Qaansheega: ${formatCurrency(totalDebt)}`}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 {`
                   <div class="info-section">
-                    <div class="info-label">Tirakoobka Maalgelinta</div>
+                    <div class="info-label">Tirakoobka Dhaqaalaha</div>
                     <div class="info-grid">
                       <div class="info-item">
                         <span class="info-key">Wadarta Dakhliga:</span>
@@ -208,16 +208,16 @@ const GetAllFinance = () => {
           {loading ? (
             <div className="p-8 text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Soo dejinta maalgelinta...</p>
+              <p className="mt-4 text-gray-600">Soo dejinta dhaqaalaha...</p>
             </div>
           ) : filteredFinances.length === 0 ? (
             <div className="p-8 text-center">
               <FiDollarSign className="mx-auto h-12 w-12 text-gray-400" />
               <h3 className="mt-2 text-sm font-medium text-gray-900">
-                {searchQuery ? 'Maalgelinta aad raadineyso ma helin' : 'Maalgelin lama helin'}
+                {searchQuery ? 'Dhaqaalaha aad raadineyso ma helin' : 'Dhaqaale lama helin'}
               </h3>
               <p className="mt-1 text-sm text-gray-500">
-                {searchQuery ? 'Fadlan isku day inaad beddesho raadinta' : 'Ku dar maalgelin cusub si aad u bilowdo'}
+                {searchQuery ? 'Fadlan isku day inaad beddesho raadinta' : 'Ku dar dhaqaale cusub si aad u bilowdo'}
               </p>
             </div>
           ) : (

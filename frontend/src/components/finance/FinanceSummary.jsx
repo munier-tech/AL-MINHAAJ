@@ -76,10 +76,10 @@ const FinanceSummary = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <FiDollarSign className="mr-3 text-green-600" />
-            Faahfaahinta Maalgelinta
+            Faahfaahinta Dhaqaalaha
           </h1>
           <p className="text-gray-600 mt-2">
-            Eeg faahfaahinta dhammeystiran ee maalgelinta iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
+            Eeg faahfaahinta dhammeystiran ee dhaqaalaha iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
           </p>
         </div>
 
@@ -142,7 +142,7 @@ const FinanceSummary = () => {
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <FiDollarSign className="mr-2" />
-              Faahfaahinta Maalgelinta {getMonthName(financeSummary.month)} {financeSummary.year}
+              Faahfaahinta Dhaqaalaha {getMonthName(financeSummary.month)} {financeSummary.year}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -251,7 +251,7 @@ const FinanceSummary = () => {
         {yearlyBreakdown && (
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4">
-              Faahfaahinta Maalgelinta Sanadka {yearlyBreakdown.year}
+              Faahfaahinta Dhaqaalaha Sanadka {yearlyBreakdown.year}
             </h3>
             
             {/* Yearly Totals */}
@@ -323,7 +323,7 @@ const FinanceSummary = () => {
 
         {/* Instructions */}
         <div className="bg-blue-50 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-blue-800 mb-4">Faahfaahinta Maalgelinta</h3>
+          <h3 className="text-lg font-semibold text-blue-800 mb-4">Faahfaahinta Dhaqaalaha</h3>
           <div className="space-y-3 text-blue-700">
             <div className="flex items-start">
               <div className="bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-blue-800 text-sm font-bold mr-3 mt-0.5">•</div>

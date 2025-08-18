@@ -45,7 +45,7 @@ const GetFinanceById = () => {
           <div className="bg-white rounded-lg shadow-md p-8">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
-              <p className="mt-4 text-gray-600">Soo dejinta macluumaadka maalgelinta...</p>
+              <p className="mt-4 text-gray-600">Soo dejinta macluumaadka dhaqaalaha...</p>
             </div>
           </div>
         </div>
@@ -60,14 +60,14 @@ const GetFinanceById = () => {
           <div className="bg-white rounded-lg shadow-md p-8">
             <div className="text-center">
               <FiDollarSign className="mx-auto h-12 w-12 text-gray-400" />
-              <h3 className="mt-2 text-sm font-medium text-gray-900">Maalgelinta lama helin</h3>
-              <p className="mt-1 text-sm text-gray-500">Maalgelinta aad raadineyso ma jirto ama waxaa dhacay khalad</p>
+              <h3 className="mt-2 text-sm font-medium text-gray-900">Dhaqaalaha lama helin</h3>
+              <p className="mt-1 text-sm text-gray-500">Dhaqaalaha aad raadineyso ma jiro ama waxaa dhacay khalad</p>
               <button
                 onClick={() => navigate('/finance/getAll')}
                 className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 <FiArrowLeft className="mr-2" />
-                Dib ugu noqo maalgelinta
+                Dib ugu noqo dhaqaalaha
               </button>
             </div>
           </div>
@@ -90,26 +90,26 @@ const GetFinanceById = () => {
                 className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
               >
                 <FiArrowLeft className="mr-2" />
-                Dib ugu noqo maalgelinta
+                Dib ugu noqo dhaqaalaha
               </button>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <FiDollarSign className="mr-3 text-green-600" />
-                Macluumaadka Maalgelinta
+                Macluumaadka Dhaqaalaha
               </h1>
               <p className="text-gray-600 mt-2">
-                Eeg faahfaahinta maalgelinta
+                Eeg faahfaahinta dhaqaalaha
               </p>
             </div>
             
             {currentFinance && (
               <PrintButton
-                title="Qoraal Maalgelinta"
-                subtitle={`Maalgelinta ${formatDate(currentFinance.date)}`}
+                title="Qoraal Dhaqaalaha"
+                subtitle={`Dhaqaalaha ${formatDate(currentFinance.date)}`}
                 className="bg-blue-600 hover:bg-blue-700"
               >
                 {`
                   <div class="info-section">
-                    <div class="info-label">Macluumaadka Maalgelinta</div>
+                    <div class="info-label">Macluumaadka Dhaqaalaha</div>
                     <div class="info-grid">
                       <div class="info-item">
                         <span class="info-key">Taariikhda:</span>
@@ -177,7 +177,7 @@ const GetFinanceById = () => {
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="bg-gradient-to-r from-green-500 to-blue-600 px-6 py-4">
             <h2 className="text-xl font-bold text-white">
-              Maalgelinta {formatDate(currentFinance.date)}
+              Dhaqaalaha {formatDate(currentFinance.date)}
             </h2>
           </div>
 
@@ -282,7 +282,7 @@ const GetFinanceById = () => {
             <div className="mt-6 bg-blue-50 rounded-lg p-4">
               <h4 className="text-sm font-medium text-blue-800 mb-2">Macluumaad Dheeraad ah</h4>
               <div className="text-sm text-blue-700 space-y-1">
-                <p>• Maalgelintan waxay ku saabsan tahay {formatDate(currentFinance.date)}</p>
+                <p>• Dhaqaalahan wuxuu ku saabsan yahay {formatDate(currentFinance.date)}</p>
                 <p>• Dakhliga wuxuu ka kooban yahay lacagta la soo galay</p>
                 <p>• Kharashka wuxuu ka kooban yahay lacagta la bixiyay</p>
                 <p>• Qaansheega wuxuu ka kooban yahay deynta la qaaday</p>
