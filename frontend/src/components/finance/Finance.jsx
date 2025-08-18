@@ -83,7 +83,7 @@ const Finance = () => {
             Maamulka Dhaqaalaha
           </h1>
           <p className="text-gray-600 mt-2">
-            Eeg iyo maamul maalgelinta iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
+            Eeg iyo maamul dhaqaalaha iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
           </p>
         </div>
 
@@ -91,7 +91,7 @@ const Finance = () => {
         <div className="bg-white rounded-lg shadow-md p-6 mb-8">
           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
             <FiRefreshCw className="mr-2" />
-            Si toos ah u abuur maalgelinta bishan
+            Si toos ah u abuur dhaqaalaha bishan
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
             <div>
@@ -131,7 +131,7 @@ const Finance = () => {
                 ) : (
                   <>
                     <FiRefreshCw className="mr-2" />
-                    Abuur DHaqaale
+                    Abuur Maalgelin
                   </>
                 )}
               </button>
@@ -336,13 +336,13 @@ const Finance = () => {
             ) : recentFinances.length === 0 ? (
               <div className="p-6 text-center">
                 <FiDollarSign className="mx-auto h-12 w-12 text-gray-400" />
-                <p className="mt-2 text-gray-600">Wali ma jiro maalgelin</p>
+                <p className="mt-2 text-gray-600">Wali ma jiro dhaqaale</p>
                 <Link
                   to="/finance/add"
                   className="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
                 >
                   <FiPlus className="mr-2" />
-                  Ku dar Maalgelin
+                  Ku dar Dhaqaale
                 </Link>
               </div>
             ) : (
@@ -413,7 +413,7 @@ const Finance = () => {
                 to="/finance/getAll"
                 className="text-blue-600 hover:text-blue-900 text-sm font-medium flex items-center"
               >
-                Eeg dhammaan Dhaqaalaha
+                Eeg dhammaan maalgelinta
                 <FiEye className="ml-1" />
               </Link>
             </div>

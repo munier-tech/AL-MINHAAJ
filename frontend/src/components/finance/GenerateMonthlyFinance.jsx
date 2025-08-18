@@ -104,7 +104,7 @@ const GenerateMonthlyFinance = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <FiRefreshCw className="mr-3 text-blue-600" />
-            Si toos ah u abuur maalgelinta bishan
+            Si toos ah u abuur dhaqaalaha bishan
           </h1>
           <p className="text-gray-600 mt-2">
             Tani waxay si toos ah u xisaabin doontaa lacagta ardayda (dakhliga) iyo mushaharka macalimiinta (kharashka) bishan.
@@ -164,7 +164,7 @@ const GenerateMonthlyFinance = () => {
               ) : (
                 <FiRefreshCw className="mr-2" />
               )}
-              Abuur Maalgelin
+              Abuur Dhaqaale
             </button>
           </div>
         </div>
@@ -174,7 +174,7 @@ const GenerateMonthlyFinance = () => {
           <div className="bg-white rounded-lg shadow-md p-6 mb-8">
             <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
               <FiDollarSign className="mr-2" />
-              Faahfaahinta Maalgelinta {getMonthName(generatedFinance.month)} {generatedFinance.year}
+              Faahfaahinta Dhaqaalaha {getMonthName(generatedFinance.month)} {generatedFinance.year}
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
@@ -257,7 +257,7 @@ const GenerateMonthlyFinance = () => {
           <div className="space-y-3 text-blue-700">
             <div className="flex items-start">
               <div className="bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-blue-800 text-sm font-bold mr-3 mt-0.5">1</div>
-              <p>Dooro bisha iyo sanadka aad rabto inaad u abuurto maalgelinta</p>
+              <p>Dooro bisha iyo sanadka aad rabto inaad u abuurto dhaqaalaha</p>
             </div>
             <div className="flex items-start">
               <div className="bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-blue-800 text-sm font-bold mr-3 mt-0.5">2</div>
@@ -265,11 +265,11 @@ const GenerateMonthlyFinance = () => {
             </div>
             <div className="flex items-start">
               <div className="bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-blue-800 text-sm font-bold mr-3 mt-0.5">3</div>
-              <p>Riix "Abuur Maalgelin" si aad u keydisato maalgelinta bishan</p>
+              <p>Riix "Abuur Dhaqaale" si aad u keydisato dhaqaalaha bishan</p>
             </div>
             <div className="flex items-start">
               <div className="bg-blue-200 rounded-full w-6 h-6 flex items-center justify-center text-blue-800 text-sm font-bold mr-3 mt-0.5">4</div>
-              <p>Maalgelinta waxay si toos ah u xisaabin doontaa lacagta ardayda (dakhliga) iyo mushaharka macalimiinta (kharashka)</p>
+              <p>Dhaqaalaha wuxuu si toos ah u xisaabin doonaa lacagta ardayda (dakhliga) iyo mushaharka macalimiinta (kharashka)</p>
             </div>
           </div>
         </div>
