@@ -4,14 +4,13 @@ import useStudentsStore from "../store/studentsStore";
 import { useFamilyFeeStore } from "../store/familyFeeStore";
 
 const FamilyFees = () => {
-  const { students, fetchStudents, searchStudents } = useStudentsStore();
+  const { students, searchStudents } = useStudentsStore();
   const { 
     familyFees, 
     loading, 
     error, 
     createFamilyFee, 
     getAllFamilyFees, 
-    updateFamilyFee,
     processFamilyFeePayment,
     deleteFamilyFee 
   } = useFamilyFeeStore();
@@ -32,16 +31,13 @@ const FamilyFees = () => {
   });
 
   const [studentSearchQuery, setStudentSearchQuery] = useState("");
+  const [manualStudentName, setManualStudentName] = useState("");
   const [payment, setPayment] = useState({
     targetId: null,
     paidAmount: "",
     paymentMethod: "cash",
     note: ""
   });
-
-  useEffect(() => {
-    fetchStudents();
-  }, [fetchStudents]);
 
   useEffect(() => {
     const params = {
@@ -71,6 +67,23 @@ const FamilyFees = () => {
     return searchStudents(studentSearchQuery);
   }, [students, studentSearchQuery, searchStudents]);
 
+  // Get student name with proper fallbacks
+  const getStudentDisplayInfo = (studentRef) => {
+    if (studentRef.student) {
+      // Registered student
+      const student = students.find(s => s._id === studentRef.student);
+      return {
+        name: student ? student.fullname : studentRef.studentName || "Arday aan la garanayn",
+        isRegistered: true
+      };
+    }
+    // Manually added student
+    return {
+      name: studentRef.studentName || "Arday aan la garanayn",
+      isRegistered: false
+    };
+  };
+
   const handleSelectStudent = (student) => {
     if (form.selectedStudents.find(s => s.student === student._id)) return;
     if (form.selectedStudents.length >= 15) {
@@ -79,20 +92,43 @@ const FamilyFees = () => {
     }
     setForm(prev => ({
       ...prev,
-      selectedStudents: [...prev.selectedStudents, { student: student._id, isPaying: false }]
+      selectedStudents: [...prev.selectedStudents, { 
+        student: student._id, 
+        studentName: student.fullname,
+        isPaying: false 
+      }]
     }));
+    setStudentSearchQuery("");
   };
 
-  const handleRemoveStudent = (studentId) => {
+  const handleAddManualStudent = () => {
+    if (!manualStudentName.trim()) return;
+    if (form.selectedStudents.length >= 15) {
+      alert("Qoys kastaa ugu badnaan 15 arday");
+      return;
+    }
     setForm(prev => ({
       ...prev,
-      selectedStudents: prev.selectedStudents.filter(s => s.student !== studentId)
+      selectedStudents: [...prev.selectedStudents, { 
+        student: null, 
+        studentName: manualStudentName.trim(),
+        isPaying: false 
+      }]
+    }));
+    setManualStudentName("");
+  };
+
+  const handleRemoveStudent = (index) => {
+    setForm(prev => ({
+      ...prev,
+      selectedStudents: prev.selectedStudents.filter((_, i) => i !== index)
     }));
   };
 
   const resetForm = () => {
     setForm({ familyName: "", selectedStudents: [], totalAmount: "", dueDate: "", note: "" });
     setStudentSearchQuery("");
+    setManualStudentName("");
   };
 
   const handleCreate = async () => {
@@ -112,7 +148,9 @@ const FamilyFees = () => {
       });
       resetForm();
       await getAllFamilyFees({ month: filters.month, year: filters.year });
-    } catch (err) {}
+    } catch (err) {
+      console.error("Khalad ayaa dhacay abuurista lacagta qoyska:", err);
+    }
   };
 
   const handleProcessPayment = async () => {
@@ -125,7 +163,9 @@ const FamilyFees = () => {
       });
       setPayment({ targetId: null, paidAmount: "", paymentMethod: "cash", note: "" });
       await getAllFamilyFees({ month: filters.month, year: filters.year });
-    } catch (err) {}
+    } catch (err) {
+      console.error("Khalad ayaa dhacay bixinta lacagta:", err);
+    }
   };
 
   const months = [
@@ -144,7 +184,7 @@ const FamilyFees = () => {
             </div>
             <h1 className="text-3xl font-bold">Lacagta Qoyska</h1>
           </div>
-          <p className="mt-1 text-sm opacity-90">Qoys hal mar uga bixi lacagta </p>
+          <p className="mt-1 text-sm opacity-90">Qoys hal mar uga bixi lacagta</p>
         </div>
 
         {/* Filters */}
@@ -292,36 +332,73 @@ const FamilyFees = () => {
                 value={studentSearchQuery}
                 onChange={(e) => setStudentSearchQuery(e.target.value)}
                 placeholder="Raadi ardayga"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg mb-4"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
-              {filteredStudents.map(st => {
-                const isSelected = form.selectedStudents.some(s => s.student === st._id);
-                return (
-                  <div key={st._id} className={`flex items-center justify-between p-3 border rounded-lg ${isSelected ? 'bg-green-50 border-green-300' : 'bg-white'}`}>
-                    <div>
-                      <div className="font-medium">{st.fullname}</div>
-                      <div className="text-xs text-gray-500">{st.class?.name || 'N/A'}</div>
+            {/* Manual student name input */}
+            <div className="flex gap-2 mb-4">
+              <input
+                type="text"
+                value={manualStudentName}
+                onChange={(e) => setManualStudentName(e.target.value)}
+                placeholder="Haddii aan la helin, ku qor magaca ardayga"
+                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg"
+              />
+              <button
+                onClick={handleAddManualStudent}
+                className="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200"
+              >
+                <FiPlus className="inline mr-1" /> Ku dar
+              </button>
+            </div>
+
+            {/* Search results */}
+            {studentSearchQuery && (
+              <div className="mb-4 border rounded-lg max-h-48 overflow-y-auto">
+                {filteredStudents.length > 0 ? (
+                  filteredStudents.map(st => (
+                    <div 
+                      key={st._id} 
+                      className="p-3 border-b hover:bg-gray-50 cursor-pointer flex justify-between items-center"
+                      onClick={() => handleSelectStudent(st)}
+                    >
+                      <div>
+                        <div className="font-medium">{st.fullname}</div>
+                        <div className="text-xs text-gray-500">{st.class?.name || 'N/A'}</div>
+                      </div>
+                      <FiPlus className="text-blue-500" />
                     </div>
-                    {isSelected ? (
-                      <button
-                        onClick={() => handleRemoveStudent(st._id)}
-                        className="text-red-600 hover:text-red-800"
-                        title="Ka saar"
-                      >
-                        <FiXCircle />
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleSelectStudent(st)}
-                        className="text-blue-600 hover:text-blue-800"
-                        title="Ku dar"
-                      >
-                        <FiPlus />
-                      </button>
-                    )}
+                  ))
+                ) : (
+                  <div className="p-3 text-center text-gray-500">
+                    Lama helin ardayga la raadinayo
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Selected students */}
+            <div className="space-y-2">
+              {form.selectedStudents.map((student, index) => {
+                const displayInfo = getStudentDisplayInfo(student);
+                return (
+                  <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                    <div>
+                      <span className="font-medium">{displayInfo.name}</span>
+                      <span className={`ml-2 text-xs ${
+                        displayInfo.isRegistered ? 'text-gray-500' : 'text-orange-500'
+                      }`}>
+                        ({displayInfo.isRegistered ? 'Diwaangani ah' : 'Galiyey qoraal ahaan'})
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => handleRemoveStudent(index)}
+                      className="text-red-600 hover:text-red-800"
+                      title="Ka saar"
+                    >
+                      <FiXCircle />
+                    </button>
                   </div>
                 );
               })}
@@ -348,45 +425,63 @@ const FamilyFees = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {familyFees.map(f => {
-                  const remaining = Math.max((f.totalAmount || 0) - (f.paidAmount || 0), 0);
+                {familyFees.map(fee => {
+                  const remaining = Math.max((fee.totalAmount || 0) - (fee.paidAmount || 0), 0);
                   return (
-                    <tr key={f._id} className="hover:bg-gray-50">
+                    <tr key={fee._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4">
-                        <div className="font-medium text-gray-900">{f.familyName}</div>
-                        <div className="text-xs text-gray-500">{months[f.month - 1]} {f.year}</div>
+                        <div className="font-medium text-gray-900">{fee.familyName}</div>
+                        <div className="text-xs text-gray-500">{months[fee.month - 1]} {fee.year}</div>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1">
-                          {f.students?.map(s => {
-                            const student = students.find(st => st._id === s.student);
+                          {fee.students?.map((studentRef, index) => {
+                            const displayInfo = getStudentDisplayInfo(studentRef);
                             return (
-                              <span key={s.student} className="px-2 py-0.5 text-xs rounded-full bg-gray-100 text-gray-700">
-                                {student ? student.fullname : 'Student not found'}
+                              <span 
+                                key={index} 
+                                className={`px-2 py-0.5 text-xs rounded-full ${
+                                  displayInfo.isRegistered ? 'bg-gray-100 text-gray-700' : 'bg-orange-100 text-orange-700'
+                                }`}
+                                title={displayInfo.isRegistered ? "Arday diwaangani ah" : "Arday qoraal ahaan lagu daray"}
+                              >
+                                {displayInfo.name}
                               </span>
                             );
                           })}
                         </div>
                       </td>
-                      <td className="px-6 py-4">{f.totalAmount}</td>
-                      <td className="px-6 py-4">{f.paidAmount || 0}</td>
-                      <td className="px-6 py-4">{remaining}</td>
+                      <td className="px-6 py-4">{fee.totalAmount?.toLocaleString()}</td>
+                      <td className="px-6 py-4">{(fee.paidAmount || 0)?.toLocaleString()}</td>
+                      <td className="px-6 py-4">{remaining?.toLocaleString()}</td>
                       <td className="px-6 py-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${remaining === 0 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'}`}>
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                          remaining === 0 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
+                        }`}>
                           {remaining === 0 ? 'La bixiyey' : 'Harsan'}
                         </span>
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => setPayment({ targetId: f._id, paidAmount: f.paidAmount || 0, paymentMethod: f.paymentMethod || 'cash', note: f.note || '' })}
+                            onClick={() => setPayment({ 
+                              targetId: fee._id, 
+                              paidAmount: fee.paidAmount || "", 
+                              paymentMethod: fee.paymentMethod || 'cash', 
+                              note: fee.note || '' 
+                            })}
                             className="p-1 text-green-600 hover:text-green-800"
                             title="Bixi/Qabso"
                           >
                             <FiDollarSign />
                           </button>
                           <button
-                            onClick={async () => { if (confirm('Ma hubtaa inaad tirtirayso?')) { await deleteFamilyFee(f._id); await getAllFamilyFees({ month: filters.month, year: filters.year }); } }}
+                            onClick={async () => { 
+                              if (confirm('Ma hubtaa inaad tirtirayso?')) { 
+                                await deleteFamilyFee(fee._id); 
+                                await getAllFamilyFees({ month: filters.month, year: filters.year }); 
+                              } 
+                            }}
                             className="p-1 text-red-600 hover:text-red-800"
                             title="Tirtir"
                           >
@@ -402,13 +497,16 @@ const FamilyFees = () => {
           </div>
         </div>
 
-        {/* Payment Modal-like inline */}
+        {/* Payment Modal */}
         {payment.targetId && (
           <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold">Qabso Bixinta Qoyska</h3>
-                <button onClick={() => setPayment({ targetId: null, paidAmount: "", paymentMethod: "cash", note: "" })}>
+                <button 
+                  onClick={() => setPayment({ targetId: null, paidAmount: "", paymentMethod: "cash", note: "" })}
+                  className="text-gray-500 hover:text-gray-700"
+                >
                   <FiXCircle />
                 </button>
               </div>
