@@ -132,9 +132,9 @@ const menuItems = [
     icon: DollarSign,
     path: '/finance',
     subItems: [
-      { text: 'Maamulka Maalgelinta', path: '/finance', icon: DollarSign },
-      { text: 'Ku dar Maalgelin', path: '/finance/add', icon: PlusCircle },
-      { text: 'Faahfaahinta Maalgelinta', path: '/finance/summary', icon: PieChart },
+      { text: 'Maamulka Dhaqaalaha', path: '/finance', icon: DollarSign },
+      { text: 'Ku dar Dhaqaale Cusub', path: '/finance/add', icon: PlusCircle },
+      { text: 'Faahfaahinta Dhaqaalaha', path: '/finance/summary', icon: PieChart },
       { text: 'Eeg Dhammaan', path: '/finance/getAll', icon: List },
     ]
   },

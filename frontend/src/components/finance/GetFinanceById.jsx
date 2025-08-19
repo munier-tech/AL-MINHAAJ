@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiCreditCard, FiCalendar, FiArrowLeft } from 'react-icons/fi';
+import { useEffect } from 'react';
+import { FiDollarSign, FiTrendingUp, FiTrendingDown, FiCreditCard, FiArrowLeft } from 'react-icons/fi';
 import { useParams, useNavigate } from 'react-router-dom';
 import useFinanceStore from '../../store/financeStore';
 import PrintButton from '../common/PrintButton';
@@ -94,7 +94,7 @@ const GetFinanceById = () => {
               </button>
               <h1 className="text-3xl font-bold text-gray-800 flex items-center">
                 <FiDollarSign className="mr-3 text-green-600" />
-                Macluumaadka Dhaqaalaha
+                 Dhaqaalaha Bilaha
               </h1>
               <p className="text-gray-600 mt-2">
                 Eeg faahfaahinta dhaqaalaha
@@ -160,10 +160,10 @@ const GetFinanceById = () => {
                   <div class="additional-info">
                     <h4>Macluumaad Dheeraad ah</h4>
                     <ul>
-                      <li>• Maalgelintan waxay ku saabsan tahay ${formatDate(currentFinance.date)}</li>
+                      <li>• maaliyada waxay ku saabsan tahay ${formatDate(currentFinance.date)}</li>
                       <li>• Dakhliga wuxuu ka kooban yahay lacagta la soo galay</li>
                       <li>• Kharashka wuxuu ka kooban yahay lacagta la bixiyay</li>
-                      <li>• Qaansheega wuxuu ka kooban yahay deynta la qaaday</li>
+                      <li>• daynta wuxuu ka kooban yahay deynta la qaaday</li>
                       <li>• Faahfaahinta waxay ka dhigantahay farqiga u dhexeeya dakhliga iyo kharashka</li>
                     </ul>
                   </div>
@@ -210,7 +210,7 @@ const GetFinanceById = () => {
               <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg shadow-lg p-6 text-white">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-orange-100 text-sm font-medium">Qaansheega</p>
+                    <p className="text-orange-100 text-sm font-medium">Daynta</p>
                     <p className="text-2xl font-bold">{formatCurrency(currentFinance.debt)}</p>
                   </div>
                   <FiCreditCard className="text-3xl text-orange-200" />
@@ -257,7 +257,7 @@ const GetFinanceById = () => {
                 
                 <div className="space-y-4">
                   <div className="flex justify-between items-center py-3 border-b border-gray-200">
-                    <span className="text-gray-600 font-medium">Qaansheega:</span>
+                    <span className="text-gray-600 font-medium">Daynta:</span>
                     <span className="text-orange-600 font-semibold">{formatCurrency(currentFinance.debt)}</span>
                   </div>
                   

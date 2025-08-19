@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { FiUsers, FiPlus, FiSearch, FiXCircle, FiDollarSign, FiCheck, FiTrash2 } from "react-icons/fi";
 import useStudentsStore from "../store/studentsStore";
 import { useFamilyFeeStore } from "../store/familyFeeStore";
+import { Loader } from "lucide-react";
 
 const FamilyFees = () => {
   const { students, searchStudents } = useStudentsStore();
@@ -67,20 +68,30 @@ const FamilyFees = () => {
     return searchStudents(studentSearchQuery);
   }, [students, studentSearchQuery, searchStudents]);
 
-  // Get student name with proper fallbacks
+  // Improved student display info function
   const getStudentDisplayInfo = (studentRef) => {
-    if (studentRef.student) {
-      // Registered student
+    // If student is populated (from backend)
+    if (studentRef.student && typeof studentRef.student === 'object') {
+      return {
+        name: studentRef.student.fullname || studentRef.studentName || "Arday aan la garanayn",
+        isRegistered: true,
+        class: studentRef.student.class?.name || 'N/A'
+      };
+    }
+    // If student is just an ID reference
+    else if (studentRef.student) {
       const student = students.find(s => s._id === studentRef.student);
       return {
         name: student ? student.fullname : studentRef.studentName || "Arday aan la garanayn",
-        isRegistered: true
+        isRegistered: !!student,
+        class: student?.class?.name || 'N/A'
       };
     }
     // Manually added student
     return {
       name: studentRef.studentName || "Arday aan la garanayn",
-      isRegistered: false
+      isRegistered: false,
+      class: 'N/A'
     };
   };
 
@@ -305,7 +316,8 @@ const FamilyFees = () => {
                 onClick={handleCreate}
                 className="w-full py-2 px-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
               >
-                <FiPlus className="inline mr-2" /> Kaydi
+                <FiPlus className="inline mr-2" />
+                {loading ? <Loader className="animate-spin p-1" size={20}/> : "Kaydi"}
               </button>
             </div>
           </div>
@@ -443,7 +455,7 @@ const FamilyFees = () => {
                                 className={`px-2 py-0.5 text-xs rounded-full ${
                                   displayInfo.isRegistered ? 'bg-gray-100 text-gray-700' : 'bg-orange-100 text-orange-700'
                                 }`}
-                                title={displayInfo.isRegistered ? "Arday diwaangani ah" : "Arday qoraal ahaan lagu daray"}
+                                title={`${displayInfo.name} (${displayInfo.class})`}
                               >
                                 {displayInfo.name}
                               </span>
@@ -451,9 +463,9 @@ const FamilyFees = () => {
                           })}
                         </div>
                       </td>
-                      <td className="px-6 py-4">{fee.totalAmount?.toLocaleString()}</td>
-                      <td className="px-6 py-4">{(fee.paidAmount || 0)?.toLocaleString()}</td>
-                      <td className="px-6 py-4">{remaining?.toLocaleString()}</td>
+                      <td className="px-6 py-4">{fee.totalAmount?.toLocaleString()}$</td>
+                      <td className="px-6 py-4">{(fee.paidAmount || 0)?.toLocaleString()}$</td>
+                      <td className="px-6 py-4">{remaining?.toLocaleString()}$</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
                           remaining === 0 ? 'bg-green-100 text-green-800' : 'bg-orange-100 text-orange-800'
@@ -466,7 +478,7 @@ const FamilyFees = () => {
                           <button
                             onClick={() => setPayment({ 
                               targetId: fee._id, 
-                              paidAmount: fee.paidAmount || "", 
+                              paidAmount: remaining > 0 ? remaining : fee.paidAmount || "", 
                               paymentMethod: fee.paymentMethod || 'cash', 
                               note: fee.note || '' 
                             })}
@@ -553,7 +565,8 @@ const FamilyFees = () => {
                     onClick={handleProcessPayment}
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
                   >
-                    <FiCheck className="inline mr-1" /> Kaydi
+                    <FiCheck className="inline mr-1" />
+                     {loading ? <Loader /> : "Bixi"}
                   </button>
                 </div>
               </div>

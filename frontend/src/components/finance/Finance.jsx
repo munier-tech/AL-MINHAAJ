@@ -80,7 +80,7 @@ const Finance = () => {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-800 flex items-center">
             <FiDollarSign className="mr-3 text-green-600" />
-            Maamulka Dhaqaalaha
+            Maamulka Dhaqaalaha Sanadlaha
           </h1>
           <p className="text-gray-600 mt-2">
             Eeg iyo maamul dhaqaalaha iskuulka - Lacagta ardayda iyo mushaharka macalimiinta
@@ -131,7 +131,7 @@ const Finance = () => {
                 ) : (
                   <>
                     <FiRefreshCw className="mr-2" />
-                    Abuur Maalgelin
+                    Abuur Dhaqaale
                   </>
                 )}
               </button>
