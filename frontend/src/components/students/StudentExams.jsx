@@ -5,14 +5,12 @@ import useStudentsStore from '../../store/studentsStore';
 import PrintButton from '../common/PrintButton';
 
 const StudentExams = () => {
-  // State-ka maxaliga ah (Local state)
   const [academicYear, setAcademicYear] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [formErrors, setFormErrors] = useState({});
 
-  // Zustand stores
   const { 
     loading, 
     error, 
