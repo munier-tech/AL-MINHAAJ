@@ -28,7 +28,7 @@ function QuranSection() {
 		try {
 			const res = await HalaqaAPI.getAll()
 			setHalaqas(res.data)
-		} catch (e) { toast.error('Failed to load Halaqas') }
+		} catch (e) { toast.error('Ku guuldareysatay inaad soo dejiso Xalqooyinka') }
 	}
 
 	const filtered = useMemo(() => {
@@ -52,7 +52,7 @@ function QuranSection() {
 		try {
 			const res = await LessonRecordsAPI.getByHalaqa(halaqaId)
 			setRecords(res.data)
-		} catch (e) { toast.error('Failed to fetch records') } finally { setLoadingRecords(false) }
+		} catch (e) { toast.error('Ku guuldareysatay helista diiwaannada') } finally { setLoadingRecords(false) }
 	}
 
 	const updateStudentPerf = (idx, key, value) => {
@@ -75,7 +75,7 @@ function QuranSection() {
 
 	return (
 		<div className="p-4 space-y-6">
-			<h2 className="text-xl font-semibold">Qur’an - Records</h2>
+			<h2 className="text-xl font-semibold">Qur'aan - Diiwaanka Maalinlaha</h2>
 			<div className="flex gap-3">
 				{/* Left: Halaqa list and search */}
 				<div className="w-1/3 bg-white rounded p-3 shadow">
@@ -97,20 +97,20 @@ function QuranSection() {
 				<div className="w-2/3 space-y-4">
 					{/* Top: Halaqa record form */}
 					<div className="bg-white rounded p-4 shadow">
-						<h3 className="font-medium mb-3">Halka Xalqada</h3>
+						<h3 className="font-medium mb-3">Xusuusinta Casharka (Xalqada)</h3>
 						<form onSubmit={saveRecord} className="grid grid-cols-2 gap-3">
-							<input value={dailyLessonHint} onChange={e=>setDailyLessonHint(e.target.value)} placeholder="Daily Lesson Hint (add page refs)" className="border rounded px-3 py-2"/>
-							<input value={currentSurah} onChange={e=>setCurrentSurah(e.target.value)} placeholder="Current Surah" className="border rounded px-3 py-2"/>
-							<input value={taxdiid} onChange={e=>setTaxdiid(e.target.value)} placeholder="Taxdiid (Checkpoint)" className="border rounded px-3 py-2"/>
+							<input value={dailyLessonHint} onChange={e=>setDailyLessonHint(e.target.value)} placeholder="Tilmaanta Casharka (ku dar bogagga)" className="border rounded px-3 py-2"/>
+							<input value={currentSurah} onChange={e=>setCurrentSurah(e.target.value)} placeholder="Suuradda Hadda" className="border rounded px-3 py-2"/>
+							<input value={taxdiid} onChange={e=>setTaxdiid(e.target.value)} placeholder="Taxdiid (Yoolka)" className="border rounded px-3 py-2"/>
 							<select value={studentStatus} onChange={e=>setStudentStatus(e.target.value)} className="border rounded px-3 py-2">
-								<option value="reached">Reached</option>
-								<option value="in_progress">In Progress</option>
-								<option value="far_behind">Far Behind</option>
+								<option value="reached">La gaaray</option>
+								<option value="in_progress">Soconaya</option>
+								<option value="far_behind">Ka dambeeya</option>
 							</select>
-							<textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Notes/Comments" className="col-span-2 border rounded px-3 py-2"/>
+							<textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Qoraallo/Faallooyin" className="col-span-2 border rounded px-3 py-2"/>
 							<div className="col-span-2 flex justify-end">
 								<button disabled={saving || !selected} type="submit" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-2 rounded">
-									<PlusCircle className="w-4 h-4"/> Save Record
+									<PlusCircle className="w-4 h-4"/> Kaydi Diiwaanka
 								</button>
 							</div>
 						</form>
@@ -137,14 +137,14 @@ function QuranSection() {
 					<div className="bg-white rounded p-4 shadow">
 						<h3 className="font-medium mb-3">Diiwaannada Xalqadan</h3>
 						{loadingRecords ? (
-							<div className="text-sm text-gray-500">Loading records...</div>
+							<div className="text-sm text-gray-500">Diiwaanno ayaa soo degaya...</div>
 						) : (
 							<div className="space-y-2">
 								{records.map(r => (
 									<div key={r._id} className="border rounded p-3">
 										<div className="text-sm text-gray-600">{new Date(r.date).toLocaleString()}</div>
 										<div className="font-medium">{r.quran?.currentSurah || r.subci?.startingSurah}</div>
-										<div className="text-xs text-gray-500">Hint: {r.quran?.dailyLessonHint} | Taxdiid: {r.quran?.taxdiid || r.subci?.taxdiid}</div>
+										<div className="text-xs text-gray-500">Tilmaan: {r.quran?.dailyLessonHint} | Taxdiid: {r.quran?.taxdiid || r.subci?.taxdiid}</div>
 									</div>
 								))}
 							</div>

@@ -90,15 +90,24 @@ const menuItems = [
       { text: 'Gali Imtixan Fasal', path: '/addClassExams', icon: PlusCircle },
     ]
   },
-  {
-    text: 'Maadooyinka',
-    icon: BookKey,
-    path: '/AllSubjects',
-    subItems: [
-      { text: 'Dhamaan Maadooyinka', path: '/AllSubjects', icon: BookOpen },
-      { text: 'Abuur Maado Cusub', path: '/AddSubjects', icon: PlusCircle },
-    ]
-  },
+    {
+    text: 'Maadooyinka',
+    icon: BookKey,
+    path: '/AllSubjects',
+    subItems: [
+      { text: 'Dhamaan Maadooyinka', path: '/AllSubjects', icon: BookOpen },
+      { text: 'Abuur Maado Cusub', path: '/AddSubjects', icon: PlusCircle },
+    ]
+  },
+  {
+    text: "Qur'aan & Subci",
+    icon: BookOpen,
+    path: '/quran-subci',
+    subItems: [
+      { text: "Qur'aan Diiwaan", path: '/quran', icon: BookOpen },
+      { text: 'Subci Xalqooyin', path: '/subci', icon: Layers },
+    ]
+  },
   {
     text: 'Arimaha Ardayga',
     icon: User2,
