@@ -72,6 +72,10 @@ app.use("/api/finance", financeRouter);
 app.use("/api/fees", feeRouter);
 app.use("/api/family-fees", familyFeeRouter);
 app.use("/api/salaries", salaryRouter);
+import halaqaRouter from "./routes/halaqaRoute.js";
+import lessonRecordRouter from "./routes/lessonRecordRoute.js";
+app.use("/api/halaqas", halaqaRouter);
+app.use("/api/lesson-records", lessonRecordRouter);
 
 // Connect to database immediately
 connectDb().then(() => {

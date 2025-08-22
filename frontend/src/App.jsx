@@ -36,6 +36,8 @@ import HealthFile from './health/HealthFile';
 import FeeFile from './fees/FeeFile';
 import SalaryFile from './salaries/SalaryFile';
 import StudentExams from './components/students/StudentExams';
+import SubciSection from './components/subci/SubciSection';
+import QuranSection from './components/quran/QuranSection';
 
 // Finance Components
 import Finance from './components/finance/Finance';
@@ -202,7 +204,29 @@ function App() {
           </ProtectedRoute>
         }
       />
-      
+
+      <Route
+        path="/subci"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <SubciSection />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/quran"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <QuranSection />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+
       <Route
         path="/addClass"
         element={
