@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import useClassesStore from '../../store/classesStore'
+import axios from '../../config/axios'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Search, PlusCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
@@ -33,7 +34,7 @@ function QuranSection() {
 
 	const loadClassStudents = async (classId) => {
 		try {
-			const res = await import('../../config/axios').then(m => m.default.get(`/classes/getStudents/${classId}`))
+			const res = await axios.get(`/classes/getStudents/${classId}`)
 			const data = res.data
 			setStudents(data.students || [])
 			setStudentPerformances((data.students||[]).map(s => ({ student: s._id, versesTaken: '', statusScore: 0, notes: '' })))
