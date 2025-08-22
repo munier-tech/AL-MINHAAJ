@@ -33,8 +33,8 @@ function QuranSection() {
 
 	const loadClassStudents = async (classId) => {
 		try {
-			const res = await fetch(`/api/classes/getStudents/${classId}`, { credentials: 'include' })
-			const data = await res.json()
+			const res = await import('../../config/axios').then(m => m.default.get(`/classes/getStudents/${classId}`))
+			const data = res.data
 			setStudents(data.students || [])
 			setStudentPerformances((data.students||[]).map(s => ({ student: s._id, versesTaken: '', statusScore: 0, notes: '' })))
 		} catch (e) {

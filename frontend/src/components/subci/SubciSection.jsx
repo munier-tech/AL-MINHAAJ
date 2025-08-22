@@ -3,6 +3,7 @@ import { HalaqaAPI } from '../../api/halaqa'
 import useStudentsStore from '../../store/studentsStore'
 import { Search, PlusCircle, Trash2, UserPlus, X } from 'lucide-react'
 import { toast } from 'react-toastify'
+import { LessonRecordsAPI } from '../../api/lessonRecords'
 
 function SubciSection() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
@@ -13,6 +14,8 @@ function SubciSection() {
 	const [newHalaqa, setNewHalaqa] = useState({ name: '', description: '', startingSurah: '', taxdiid: '' })
 	const [saving, setSaving] = useState(false)
 	const [removing, setRemoving] = useState(false)
+	const [editMode, setEditMode] = useState(false)
+	const [subciPerformances, setSubciPerformances] = useState([])
 
 	useEffect(() => {
 		fetchStudents()
@@ -94,6 +97,33 @@ function SubciSection() {
 		} catch (e) { toast.error('Tirtiristu wey fashilantay') }
 	}
 
+	useEffect(() => {
+		if (selected?.students) {
+			setSubciPerformances(selected.students.map(s => ({ student: s._id, versesTaken: 0, statusScore: 0, notes: '' })))
+		}
+	}, [selected])
+
+	const autoJudge = (verses) => {
+		const n = Number(verses)||0
+		if (n <= 3) return 0
+		if (n <= 6) return 1
+		if (n <= 10) return 2
+		return 3
+	}
+
+	const updateSubciPerf = (idx, key, value) => {
+		setSubciPerformances(prev => prev.map((sp, i) => i===idx ? { ...sp, [key]: value, statusScore: key==='versesTaken' ? autoJudge(value) : sp.statusScore } : sp))
+	}
+
+	const saveSubciRecord = async () => {
+		if (!selected?._id) return toast.error('Xulo Xalqad')
+		try {
+			await LessonRecordsAPI.createSubci({ halaqaId: selected._id, startingSurah: selected.startingSurah||'', taxdiid: selected.taxdiid||'', notes: '', studentPerformances: subciPerformances })
+			toast.success('Diiwaan Subci waa la kaydiyay')
+			setEditMode(false)
+		} catch (e) { toast.error('Kaydinta Subci waa fashilantay') }
+	}
+
 	return (
 		<div className="p-4 space-y-6">
 			<h2 className="text-xl font-semibold">Subci - Maareynta Xalqooyinka</h2>
@@ -119,16 +149,47 @@ function SubciSection() {
 							</div>
 						))}
 					</div>
-					<div className="col-span-2 border rounded p-3 min-h-40">
-						{!selected ? (
-							<div className="text-gray-500">Dooro Xalqad si aad u maamusho ardayda.</div>
-						) : (
-							<div>
-								<h3 className="font-medium mb-2">{selected.name}</h3>
-								<p className="text-sm text-gray-500">Taxdiid: {selected.taxdiid || '-'}</p>
-							</div>
-						)}
-					</div>
+											<div className="col-span-2 border rounded p-3 min-h-40">
+							{!selected ? (
+								<div className="text-gray-500">Dooro Xalqad si aad u maamusho ardayda.</div>
+							) : (
+								<div className="space-y-3">
+									<div className="flex items-center justify-between">
+										<div>
+											<h3 className="font-medium mb-2">{selected.name}</h3>
+											<p className="text-sm text-gray-500">Taxdiid: {selected.taxdiid || '-'}</p>
+										</div>
+										<button onClick={()=>setEditMode(v=>!v)} className="px-3 py-2 rounded bg-indigo-600 text-white">{editMode ? 'Dami Edit' : 'Fur Edit'}</button>
+									</div>
+									{editMode && (
+										<div>
+											<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2">
+												<div className="col-span-2">Arday</div>
+												<div>Aayadaha</div>
+												<div>Xaalad</div>
+												<div>Faallo</div>
+											</div>
+											<div className="max-h-64 overflow-auto divide-y">
+												{(selected.students||[]).map((s, idx) => (
+													<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-2">
+														<div className="col-span-2">
+															<div className="font-medium text-sm">{s.fullname}</div>
+															<div className="text-xs text-gray-500">{s.studentId||'-'}</div>
+														</div>
+														<input type="number" value={subciPerformances[idx]?.versesTaken||0} onChange={e=>updateSubciPerf(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
+														<div className="text-sm">{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][subciPerformances[idx]?.statusScore||0]}</div>
+														<input value={subciPerformances[idx]?.notes||''} onChange={e=>updateSubciPerf(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+													</div>
+												))}
+											</div>
+											<div className="flex justify-end mt-3">
+												<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subci</button>
+											</div>
+										</div>
+									)}
+								</div>
+							)}
+						</div>
 				</div>
 			</div>
 
