@@ -31,16 +31,19 @@ const lessonRecordSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  class: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Class",
+  },
   halaqa: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Halaqa",
-    required: true
   },
   quran: {
-    dailyLessonHint: { type: String, default: "" },
+    dailyLessonNumber: { type: Number, default: 0 },
     currentSurah: { type: String, default: "" },
     taxdiid: { type: String, default: "" },
-    studentStatus: { type: String, enum: ["reached", "in_progress", "far_behind"], default: "in_progress" },
+    studentStatus: { type: String, enum: ["gaadhay", "dhexda_maraya", "aad_uga_fog"], default: "dhexda_maraya" },
     notes: { type: String, default: "" }
   },
   subci: {

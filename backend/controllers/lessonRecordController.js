@@ -1,18 +1,19 @@
 import LessonRecord from "../models/lessonRecordModel.js";
 import Halaqa from "../models/halaqaModel.js";
+import Class from "../models/classModel.js";
 
 export const createQuranRecord = async (req, res) => {
   try {
-    const { halaqaId, dailyLessonHint, currentSurah, taxdiid, studentStatus, notes, studentPerformances } = req.body;
+    const { classId, dailyLessonNumber, currentSurah, taxdiid, studentStatus, notes, studentPerformances } = req.body;
 
-    const halaqa = await Halaqa.findById(halaqaId);
-    if (!halaqa) return res.status(404).json({ message: "Halaqa not found" });
+    const classDoc = await Class.findById(classId);
+    if (!classDoc) return res.status(404).json({ message: "Fasalka lama helin" });
 
     const record = await LessonRecord.create({
       type: "quran",
-      halaqa: halaqaId,
+      class: classId,
       quran: {
-        dailyLessonHint,
+        dailyLessonNumber,
         currentSurah,
         taxdiid,
         studentStatus,
@@ -21,7 +22,9 @@ export const createQuranRecord = async (req, res) => {
       studentPerformances: studentPerformances || []
     });
 
-    const populated = await record.populate({ path: "halaqa", select: "name" }).populate({ path: "studentPerformances.student", select: "fullname studentId" });
+    const populated = await record
+      .populate({ path: "class", select: "name level" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
 
     res.status(201).json(populated);
   } catch (err) {
@@ -55,10 +58,36 @@ export const createSubciRecord = async (req, res) => {
   }
 };
 
+export const getQuranRecordsByClassAndMonth = async (req, res) => {
+  try {
+    const { classId } = req.params;
+    const { month, year } = req.query; // month: 1-12
+
+    const start = new Date(Number(year), Number(month) - 1, 1);
+    const end = new Date(Number(year), Number(month), 0, 23, 59, 59, 999);
+
+    const items = await LessonRecord.find({
+      type: "quran",
+      class: classId,
+      date: { $gte: start, $lte: end }
+    })
+      .sort({ date: -1 })
+      .populate({ path: "class", select: "name level" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
+
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getRecordsByHalaqa = async (req, res) => {
   try {
     const { halaqaId } = req.params;
-    const items = await LessonRecord.find({ halaqa: halaqaId }).sort({ date: -1 }).populate({ path: "halaqa", select: "name" }).populate({ path: "studentPerformances.student", select: "fullname studentId" });
+    const items = await LessonRecord.find({ halaqa: halaqaId })
+      .sort({ date: -1 })
+      .populate({ path: "halaqa", select: "name" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
     res.json(items);
   } catch (err) {
     res.status(500).json({ message: err.message });
