@@ -1,6 +1,6 @@
 import express from "express";
 import { protectedRoute } from "../middlewares/authorization.js";
-import { createQuranRecord, createSubciRecord, getRecordsByHalaqa, deleteRecord, getQuranRecordsByClassAndMonth } from "../controllers/lessonRecordController.js";
+import { createQuranRecord, createSubciRecord, getRecordsByHalaqa, deleteRecord, getQuranRecordsByClassAndMonth, updateRecord } from "../controllers/lessonRecordController.js";
 
 const router = express.Router();
 
@@ -12,6 +12,8 @@ router.get("/quran/class/:classId", protectedRoute, getQuranRecordsByClassAndMon
 router.post("/subci", protectedRoute, createSubciRecord);
 router.get("/halaqa/:halaqaId", protectedRoute, getRecordsByHalaqa);
 
+// Common
+router.put("/update/:id", protectedRoute, updateRecord);
 router.delete("/delete/:id", protectedRoute, deleteRecord);
 
 export default router;

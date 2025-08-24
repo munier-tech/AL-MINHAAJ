@@ -24,6 +24,9 @@ function QuranSection() {
 	const [students, setStudents] = useState([])
 	const [studentRows, setStudentRows] = useState([])
 
+	const [editingRecordId, setEditingRecordId] = useState(null)
+	const [editingRows, setEditingRows] = useState([])
+
 	useEffect(() => { fetchClasses() }, [fetchClasses])
 
 	useEffect(() => {
@@ -67,6 +70,38 @@ function QuranSection() {
 			setStudentRows(students.map(s => ({ student: s._id, dailyLessonHint: '', currentSurah: '', taxdiid: '', studentStatus: 'dhexda_maraya', notes: '' })))
 			toast.success('Diiwaan la kaydiyay')
 		} catch (e) { toast.error('Kaydintu wey fashilantay') } finally { setSaving(false) }
+	}
+
+	const startEdit = (record) => {
+		setEditingRecordId(record._id)
+		setEditingRows((record.studentPerformances||[]).map(sp => ({
+			student: sp.student?._id || sp.student,
+			dailyLessonHint: sp.dailyLessonHint || '',
+			currentSurah: sp.currentSurah || '',
+			taxdiid: sp.taxdiid || '',
+			studentStatus: sp.studentStatus || 'dhexda_maraya',
+			notes: sp.notes || ''
+		})))
+	}
+	const cancelEdit = () => { setEditingRecordId(null); setEditingRows([]) }
+	const updateEditingRow = (idx, key, value) => {
+		setEditingRows(prev => prev.map((r, i) => i===idx ? { ...r, [key]: value } : r))
+	}
+	const saveEdit = async (id) => {
+		try {
+			const res = await LessonRecordsAPI.update(id, { studentPerformances: editingRows })
+			setRecords(prev => prev.map(r => r._id === id ? res.data : r))
+			setEditingRecordId(null)
+			setEditingRows([])
+			toast.success('Diiwaan waa la cusbooneysiiyay')
+		} catch (e) { toast.error('Cusbooneysiintu waa fashilantay') }
+	}
+	const removeRecord = async (id) => {
+		try {
+			await LessonRecordsAPI.remove(id)
+			setRecords(prev => prev.filter(r => r._id !== id))
+			toast.success('Diiwaan waa la tirtiray')
+		} catch (e) { toast.error('Tirtiristu waa fashilantay') }
 	}
 
 	return (
@@ -133,8 +168,12 @@ function QuranSection() {
 							<div key={r._id} className="border rounded p-3">
 								<div className="flex items-center justify-between text-sm text-gray-600">
 									<span>{new Date(r.date).toLocaleString()}</span>
-									<span className="text-xs text-gray-500">Fasal: {r.class?.name}</span>
+									<div className="flex items-center gap-2">
+										<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
+										<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
+									</div>
 								</div>
+								<span className="text-xs text-gray-500">Fasal: {r.class?.name}</span>
 								{(r.quran?.dailyLessonHint || r.quran?.currentSurah || r.quran?.taxdiid || r.quran?.studentStatus) && (
 									<div className="mt-1 text-xs text-gray-700">Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}</div>
 								)}
@@ -148,20 +187,42 @@ function QuranSection() {
 										<div>Faallo</div>
 									</div>
 									<div className="max-h-80 overflow-auto divide-y">
-										{(r.studentPerformances||[]).map(sp => (
+										{(r.studentPerformances||[]).map((sp, idx) => (
 											<div key={(sp.student && sp.student._id) || Math.random()} className="grid grid-cols-6 items-center gap-2 px-2 py-1 text-xs">
 												<div className="col-span-1">
 													<div className="font-medium">{sp.student?.fullname || '-'}</div>
 													<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
 												</div>
-												<div>{sp.dailyLessonHint || ''}</div>
-												<div>{sp.currentSurah || ''}</div>
-												<div>{sp.taxdiid || ''}</div>
-												<div>{sp.studentStatus || ''}</div>
-												<div>{sp.notes || ''}</div>
+												{editingRecordId===r._id ? (
+													<>
+														<input value={editingRows[idx]?.dailyLessonHint||''} onChange={e=>updateEditingRow(idx,'dailyLessonHint',e.target.value)} className="border rounded px-2 py-1"/>
+														<input value={editingRows[idx]?.currentSurah||''} onChange={e=>updateEditingRow(idx,'currentSurah',e.target.value)} className="border rounded px-2 py-1"/>
+														<input value={editingRows[idx]?.taxdiid||''} onChange={e=>updateEditingRow(idx,'taxdiid',e.target.value)} className="border rounded px-2 py-1"/>
+														<select value={editingRows[idx]?.studentStatus||'dhexda_maraya'} onChange={e=>updateEditingRow(idx,'studentStatus',e.target.value)} className="border rounded px-2 py-1">
+															<option value="gaadhay">Gaadhay</option>
+															<option value="dhexda_maraya">Dhexda maraya</option>
+															<option value="aad_uga_fog">Aad uga fog</option>
+														</select>
+														<input value={editingRows[idx]?.notes||''} onChange={e=>updateEditingRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+													</>
+												) : (
+													<>
+														<div>{sp.dailyLessonHint || ''}</div>
+														<div>{sp.currentSurah || ''}</div>
+														<div>{sp.taxdiid || ''}</div>
+														<div>{sp.studentStatus || ''}</div>
+														<div>{sp.notes || ''}</div>
+													</>
+												)}
 											</div>
 										))}
 									</div>
+									{editingRecordId===r._id && (
+										<div className="flex justify-end gap-2 mt-2">
+											<button onClick={()=>saveEdit(r._id)} className="px-2 py-1 text-xs rounded bg-green-600 text-white">Kaydi</button>
+											<button onClick={cancelEdit} className="px-2 py-1 text-xs rounded border">Jooji</button>
+										</div>
+									)}
 								</div>
 							</div>
 						))}

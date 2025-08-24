@@ -60,6 +60,34 @@ export const createSubciRecord = async (req, res) => {
   }
 };
 
+export const updateRecord = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { quran, studentPerformances } = req.body;
+
+    const record = await LessonRecord.findById(id);
+    if (!record) return res.status(404).json({ message: "Record not found" });
+
+    if (quran && typeof quran === 'object') {
+      record.quran = { ...record.quran?.toObject?.() || {}, ...quran };
+    }
+    if (Array.isArray(studentPerformances)) {
+      record.studentPerformances = studentPerformances;
+    }
+
+    await record.save();
+
+    const populated = await LessonRecord.findById(record._id)
+      .populate({ path: "class", select: "name level" })
+      .populate({ path: "halaqa", select: "name" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
+
+    res.json(populated);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+
 export const getQuranRecordsByClassAndMonth = async (req, res) => {
   try {
     const { classId } = req.params;
