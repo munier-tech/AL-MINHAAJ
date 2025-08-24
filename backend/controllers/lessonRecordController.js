@@ -22,11 +22,12 @@ export const createQuranRecord = async (req, res) => {
       studentPerformances: studentPerformances || []
     });
 
-    const populated = await record
-      .populate({ path: "class", select: "name level" })
-      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
+    await record.populate([
+      { path: "class", select: "name level" },
+      { path: "studentPerformances.student", select: "fullname studentId" }
+    ]);
 
-    res.status(201).json(populated);
+    res.status(201).json(record);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -50,9 +51,12 @@ export const createSubciRecord = async (req, res) => {
       studentPerformances: studentPerformances || []
     });
 
-    const populated = await record.populate({ path: "halaqa", select: "name" }).populate({ path: "studentPerformances.student", select: "fullname studentId" });
+    await record.populate([
+      { path: "halaqa", select: "name" },
+      { path: "studentPerformances.student", select: "fullname studentId" }
+    ]);
 
-    res.status(201).json(populated);
+    res.status(201).json(record);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
