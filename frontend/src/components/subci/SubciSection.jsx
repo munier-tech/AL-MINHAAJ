@@ -16,6 +16,9 @@ function SubcisSection() {
 	const [removing, setRemoving] = useState(false)
 	const [editMode, setEditMode] = useState(false)
 	const [subciPerformances, setSubciPerformances] = useState([])
+	const [records, setRecords] = useState([])
+	const [editingId, setEditingId] = useState(null)
+	const [editingRows, setEditingRows] = useState([])
 
 	useEffect(() => {
 		fetchStudents()
@@ -124,6 +127,37 @@ function SubcisSection() {
 		} catch (e) { toast.error('Kaydinta Subci waa fashilantay') }
 	}
 
+	const loadRecords = async (halaqaId) => {
+		try {
+			const res = await LessonRecordsAPI.getByHalaqa(halaqaId)
+			setRecords(res.data)
+		} catch { /* ignore */ }
+	}
+
+	useEffect(() => { if (selected?._id) loadRecords(selected._id) }, [selected?._id])
+
+	const startEdit = (r) => {
+		setEditingId(r._id)
+		setEditingRows((r.studentPerformances||[]).map(sp => ({ student: sp.student?._id || sp.student, versesTaken: sp.versesTaken||0, statusScore: sp.statusScore||0, notes: sp.notes||'' })))
+	}
+	const cancelEdit = () => { setEditingId(null); setEditingRows([]) }
+	const updateRow = (idx, key, value) => { setEditingRows(prev => prev.map((x,i)=> i===idx? { ...x, [key]: value }: x)) }
+	const saveEdit = async (id) => {
+		try {
+			const res = await LessonRecordsAPI.update(id, { studentPerformances: editingRows })
+			setRecords(prev => prev.map(r => r._id===id? res.data: r))
+			setEditingId(null); setEditingRows([])
+			toast.success('Diiwaan Subcis waa la cusbooneysiiyay')
+		} catch { toast.error('Cusbooneysiin fashilantay') }
+	}
+	const removeRecord = async (id) => {
+		try {
+			await LessonRecordsAPI.remove(id)
+			setRecords(prev => prev.filter(r => r._id !== id))
+			toast.success('Diiwaan waa la tirtiray')
+		} catch { toast.error('Tirtiristu fashilantay') }
+	}
+
 	return (
 		<div className="p-4 space-y-6">
 			<h2 className="text-xl font-semibold">Subci - Maareynta Xalqooyinka</h2>
@@ -183,18 +217,68 @@ function SubcisSection() {
 												))}
 											</div>
 											<div className="flex justify-end mt-3">
-												<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subci</button>
+												<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subcis</button>
 											</div>
 										</div>
 									)}
+									<div className="mt-6">
+										<h3 className="font-medium mb-2">Diiwaannada Subcis</h3>
+										<div className="space-y-2">
+											{records.map(r => (
+												<div key={r._id} className="border rounded p-3">
+													<div className="flex items-center justify-between text-sm text-gray-600">
+														<span>{new Date(r.date).toLocaleString()}</span>
+														<div className="flex items-center gap-2">
+															<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
+															<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
+														</div>
+													</div>
+													<div className="grid grid-cols-4 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1 mt-2">
+														<div className="col-span-1">Arday</div>
+														<div>Aayadaha</div>
+														<div>Xaalad</div>
+														<div>Faallo</div>
+													</div>
+													<div className="max-h-64 overflow-auto divide-y">
+														{(r.studentPerformances||[]).map((sp, idx) => (
+															<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-1 text-xs">
+																<div className="col-span-1">
+																	<div className="font-medium">{sp.student?.fullname || '-'}</div>
+																	<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
+																</div>
+																{editingId===r._id ? (
+																	<>
+																		<input type="number" value={editingRows[idx]?.versesTaken||0} onChange={e=>updateRow(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
+																		<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][editingRows[idx]?.statusScore||0]}</div>
+																		<input value={editingRows[idx]?.notes||''} onChange={e=>updateRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+																	</>
+																) : (
+																	<>
+																		<div>{sp.versesTaken || 0}</div>
+																		<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][sp.statusScore||0]}</div>
+																		<div>{sp.notes || ''}</div>
+																	</>
+																)}
+														</div>
+													))}
+												</div>
+												{editingId===r._id && (
+													<div className="flex justify-end gap-2 mt-2">
+														<button onClick={()=>saveEdit(r._id)} className="px-2 py-1 text-xs rounded bg-green-600 text-white">Kaydi</button>
+														<button onClick={cancelEdit} className="px-2 py-1 text-xs rounded border">Jooji</button>
+													</div>
+												)}
+											</div>
+										))}
+									</div>
 								</div>
-							)}
+							</div>
 						</div>
-				</div>
+					</div>
 			</div>
 
 			{creating && (
-				<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
 					<div className="bg-white rounded p-4 w-full max-w-md">
 						<div className="flex items-center justify-between mb-3">
 							<h3 className="font-semibold">Abuur Xalqad</h3>

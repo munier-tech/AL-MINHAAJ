@@ -63,13 +63,16 @@ export const createSubcisRecord = async (req, res) => {
 export const updateRecord = async (req, res) => {
   try {
     const { id } = req.params;
-    const { quran, studentPerformances } = req.body;
+    const { quran, subci, studentPerformances } = req.body;
 
     const record = await LessonRecord.findById(id);
     if (!record) return res.status(404).json({ message: "Record not found" });
 
     if (quran && typeof quran === 'object') {
       record.quran = { ...record.quran?.toObject?.() || {}, ...quran };
+    }
+    if (subci && typeof subci === 'object') {
+      record.subci = { ...record.subci?.toObject?.() || {}, ...subci };
     }
     if (Array.isArray(studentPerformances)) {
       record.studentPerformances = studentPerformances;
