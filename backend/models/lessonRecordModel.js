@@ -21,7 +21,7 @@ const studentPerformanceSchema = new mongoose.Schema({
 const lessonRecordSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ["quran", "subci"],
+    enum: ["quran", "subcis"],
     required: true
   },
   date: {

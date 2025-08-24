@@ -4,7 +4,7 @@ import { HalaqaAPI } from '../../api/halaqa'
 import { PlusCircle, Trash2, Edit3, Save, X, UserPlus, UserMinus, Search } from 'lucide-react'
 import { toast } from 'react-toastify'
 
-function SubciManage() {
+function SubcisManage() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
 	const [halaqas, setHalaqas] = useState([])
 	const [query, setQuery] = useState('')
@@ -190,4 +190,4 @@ function SubciManage() {
 	)
 }
 
-export default SubciManage
+export default SubcisManage

@@ -32,7 +32,7 @@ export const createQuranRecord = async (req, res) => {
   }
 };
 
-export const createSubciRecord = async (req, res) => {
+export const createSubcisRecord = async (req, res) => {
   try {
     const { halaqaId, startingSurah, taxdiid, notes, studentPerformances } = req.body;
 
@@ -40,7 +40,7 @@ export const createSubciRecord = async (req, res) => {
     if (!halaqa) return res.status(404).json({ message: "Halaqa not found" });
 
     const created = await LessonRecord.create({
-      type: "subci",
+      type: "subcis",
       halaqa: halaqaId,
       subci: {
         startingSurah,

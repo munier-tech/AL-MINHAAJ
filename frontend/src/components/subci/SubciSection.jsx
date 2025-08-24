@@ -5,7 +5,7 @@ import { Search, PlusCircle, Trash2, UserPlus, X } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 
-function SubciSection() {
+function SubcisSection() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
 	const [query, setQuery] = useState('')
 	const [halaqas, setHalaqas] = useState([])
@@ -217,4 +217,4 @@ function SubciSection() {
 	)
 }
 
-export default SubciSection
+export default SubcisSection

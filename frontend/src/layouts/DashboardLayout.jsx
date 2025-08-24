@@ -105,8 +105,8 @@ const menuItems = [
     path: '/quran-subci',
     subItems: [
       { text: "Qur'aan Diiwaan", path: '/quran', icon: BookOpen },
-      { text: 'Subci Diiwaan', path: '/subci', icon: BookOpen },
-      { text: 'Maamul Xalqooyin', path: '/subci/manage', icon: Layers },
+      { text: 'Subcis Diiwaan', path: '/subci', icon: BookOpen },
+      { text: 'Maamul Xalqooyin (Subcis)', path: '/subci/manage', icon: Layers },
     ]
   },
   {
