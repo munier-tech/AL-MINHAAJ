@@ -183,82 +183,82 @@ function SubcisSection() {
 							</div>
 						))}
 					</div>
-											<div className="col-span-2 border rounded p-3 min-h-40">
-							{!selected ? (
-								<div className="text-gray-500">Dooro Xalqad si aad u maamusho ardayda.</div>
-							) : (
-								<div className="space-y-3">
-									<div className="flex items-center justify-between">
-										<div>
-											<h3 className="font-medium mb-2">{selected.name}</h3>
-											<p className="text-sm text-gray-500">Taxdiid: {selected.taxdiid || '-'}</p>
-										</div>
-										<button onClick={()=>setEditMode(v=>!v)} className="px-3 py-2 rounded bg-indigo-600 text-white">{editMode ? 'Dami Edit' : 'Fur Edit'}</button>
+					<div className="col-span-2 border rounded p-3 min-h-40">
+						{!selected ? (
+							<div className="text-gray-500">Dooro Xalqad si aad u maamusho ardayda.</div>
+						) : (
+							<div className="space-y-3">
+								<div className="flex items-center justify-between">
+									<div>
+										<h3 className="font-medium mb-2">{selected.name}</h3>
+										<p className="text-sm text-gray-500">Taxdiid: {selected.taxdiid || '-'}</p>
 									</div>
-									{editMode && (
-										<div>
-											<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2">
-												<div className="col-span-2">Arday</div>
-												<div>Aayadaha</div>
-												<div>Xaalad</div>
-												<div>Faallo</div>
-											</div>
-											<div className="max-h-64 overflow-auto divide-y">
-												{(selected.students||[]).map((s, idx) => (
-													<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-2">
-														<div className="col-span-2">
-															<div className="font-medium text-sm">{s.fullname}</div>
-															<div className="text-xs text-gray-500">{s.studentId||'-'}</div>
-														</div>
-														<input type="number" value={subciPerformances[idx]?.versesTaken||0} onChange={e=>updateSubciPerf(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
-														<div className="text-sm">{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][subciPerformances[idx]?.statusScore||0]}</div>
-														<input value={subciPerformances[idx]?.notes||''} onChange={e=>updateSubciPerf(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
-													</div>
-												))}
-											</div>
-											<div className="flex justify-end mt-3">
-												<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subcis</button>
-											</div>
+									<button onClick={()=>setEditMode(v=>!v)} className="px-3 py-2 rounded bg-indigo-600 text-white">{editMode ? 'Dami Edit' : 'Fur Edit'}</button>
+								</div>
+								{editMode && (
+									<div>
+										<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2">
+											<div className="col-span-2">Arday</div>
+											<div>Aayadaha</div>
+											<div>Xaalad</div>
+											<div>Faallo</div>
 										</div>
-									)}
-									<div className="mt-6">
-										<h3 className="font-medium mb-2">Diiwaannada Subcis</h3>
-										<div className="space-y-2">
-											{records.map(r => (
-												<div key={r._id} className="border rounded p-3">
-													<div className="flex items-center justify-between text-sm text-gray-600">
-														<span>{new Date(r.date).toLocaleString()}</span>
-														<div className="flex items-center gap-2">
-															<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
-															<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
-														</div>
+										<div className="max-h-64 overflow-auto divide-y">
+											{(selected.students||[]).map((s, idx) => (
+												<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-2">
+													<div className="col-span-2">
+														<div className="font-medium text-sm">{s.fullname}</div>
+														<div className="text-xs text-gray-500">{s.studentId||'-'}</div>
 													</div>
-													<div className="grid grid-cols-4 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1 mt-2">
-														<div className="col-span-1">Arday</div>
-														<div>Aayadaha</div>
-														<div>Xaalad</div>
-														<div>Faallo</div>
+													<input type="number" value={subciPerformances[idx]?.versesTaken||0} onChange={e=>updateSubciPerf(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
+													<div className="text-sm">{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][subciPerformances[idx]?.statusScore||0]}</div>
+													<input value={subciPerformances[idx]?.notes||''} onChange={e=>updateSubciPerf(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+												</div>
+											))}
+										</div>
+										<div className="flex justify-end mt-3">
+											<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subcis</button>
+										</div>
+									</div>
+								)}
+								<div className="mt-6">
+									<h3 className="font-medium mb-2">Diiwaannada Subcis</h3>
+									<div className="space-y-2">
+										{records.map(r => (
+											<div key={r._id} className="border rounded p-3">
+												<div className="flex items-center justify-between text-sm text-gray-600">
+													<span>{new Date(r.date).toLocaleString()}</span>
+													<div className="flex items-center gap-2">
+														<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
+														<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
 													</div>
-													<div className="max-h-64 overflow-auto divide-y">
-														{(r.studentPerformances||[]).map((sp, idx) => (
-															<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-1 text-xs">
-																<div className="col-span-1">
-																	<div className="font-medium">{sp.student?.fullname || '-'}</div>
-																	<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
-																</div>
-																{editingId===r._id ? (
-																	<>
-																		<input type="number" value={editingRows[idx]?.versesTaken||0} onChange={e=>updateRow(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
-																		<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][editingRows[idx]?.statusScore||0]}</div>
-																		<input value={editingRows[idx]?.notes||''} onChange={e=>updateRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
-																	</>
-																) : (
-																	<>
-																		<div>{sp.versesTaken || 0}</div>
-																		<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][sp.statusScore||0]}</div>
-																		<div>{sp.notes || ''}</div>
-																	</>
-																)}
+												</div>
+												<div className="grid grid-cols-4 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1 mt-2">
+													<div className="col-span-1">Arday</div>
+													<div>Aayadaha</div>
+													<div>Xaalad</div>
+													<div>Faallo</div>
+												</div>
+												<div className="max-h-64 overflow-auto divide-y">
+													{(r.studentPerformances||[]).map((sp, idx) => (
+														<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-1 text-xs">
+															<div className="col-span-1">
+																<div className="font-medium">{sp.student?.fullname || '-'}</div>
+																<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
+															</div>
+															{editingId===r._id ? (
+																<>
+																	<input type="number" value={editingRows[idx]?.versesTaken||0} onChange={e=>updateRow(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
+																	<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][editingRows[idx]?.statusScore||0]}</div>
+																	<input value={editingRows[idx]?.notes||''} onChange={e=>updateRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+																</>
+															) : (
+																<>
+																	<div>{sp.versesTaken || 0}</div>
+																	<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][sp.statusScore||0]}</div>
+																	<div>{sp.notes || ''}</div>
+																</>
+															)}
 														</div>
 													))}
 												</div>
@@ -273,12 +273,13 @@ function SubcisSection() {
 									</div>
 								</div>
 							</div>
-						</div>
+						)}
 					</div>
+				</div>
 			</div>
 
 			{creating && (
-<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
+				<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
 					<div className="bg-white rounded p-4 w-full max-w-md">
 						<div className="flex items-center justify-between mb-3">
 							<h3 className="font-semibold">Abuur Xalqad</h3>
