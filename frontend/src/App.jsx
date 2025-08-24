@@ -38,6 +38,7 @@ import SalaryFile from './salaries/SalaryFile';
 import StudentExams from './components/students/StudentExams';
 import SubciSection from './components/subci/SubciSection';
 import QuranSection from './components/quran/QuranSection';
+import SubciManage from './components/subci/SubciManage';
 
 // Finance Components
 import Finance from './components/finance/Finance';
@@ -211,6 +212,17 @@ function App() {
           <ProtectedRoute>
             <AdminRoute>
               <SubciSection />
+            </AdminRoute>
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/subci/manage"
+        element={
+          <ProtectedRoute>
+            <AdminRoute>
+              <SubciManage />
             </AdminRoute>
           </ProtectedRoute>
         }
