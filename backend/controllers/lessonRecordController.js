@@ -9,7 +9,7 @@ export const createQuranRecord = async (req, res) => {
     const classDoc = await Class.findById(classId);
     if (!classDoc) return res.status(404).json({ message: "Fasalka lama helin" });
 
-    const record = await LessonRecord.create({
+    const created = await LessonRecord.create({
       type: "quran",
       class: classId,
       quran: {
@@ -22,10 +22,9 @@ export const createQuranRecord = async (req, res) => {
       studentPerformances: studentPerformances || []
     });
 
-    await record.populate([
-      { path: "class", select: "name level" },
-      { path: "studentPerformances.student", select: "fullname studentId" }
-    ]);
+    const record = await LessonRecord.findById(created._id)
+      .populate({ path: "class", select: "name level" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
 
     res.status(201).json(record);
   } catch (err) {
@@ -40,7 +39,7 @@ export const createSubciRecord = async (req, res) => {
     const halaqa = await Halaqa.findById(halaqaId);
     if (!halaqa) return res.status(404).json({ message: "Halaqa not found" });
 
-    const record = await LessonRecord.create({
+    const created = await LessonRecord.create({
       type: "subci",
       halaqa: halaqaId,
       subci: {
@@ -51,10 +50,9 @@ export const createSubciRecord = async (req, res) => {
       studentPerformances: studentPerformances || []
     });
 
-    await record.populate([
-      { path: "halaqa", select: "name" },
-      { path: "studentPerformances.student", select: "fullname studentId" }
-    ]);
+    const record = await LessonRecord.findById(created._id)
+      .populate({ path: "halaqa", select: "name" })
+      .populate({ path: "studentPerformances.student", select: "fullname studentId" });
 
     res.status(201).json(record);
   } catch (err) {
