@@ -39,6 +39,7 @@ import StudentExams from './components/students/StudentExams';
 import SubcisSection from './components/subci/SubciSection';
 import QuranSection from './components/quran/QuranSection';
 import SubcisManage from './components/subci/SubciManage';
+import HealthCheck from './components/HealthCheck';
 
 // Finance Components
 import Finance from './components/finance/Finance';
@@ -132,6 +133,12 @@ function App() {
   return (
     <ThemeProvider>
       <Routes>
+        {/* Temporary Health Check Route for Testing */}
+        <Route
+          path="/health"
+          element={<HealthCheck />}
+        />
+
         {/* Public Routes */}
         <Route
           path="/login"
@@ -529,7 +536,8 @@ function App() {
       />
 
       {/* Redirects */}
-      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/" element={<Navigate to="/health" replace />} />
+      <Route path="*" element={<Navigate to="/health" replace />} />
       </Routes>
     </ThemeProvider>
   );
