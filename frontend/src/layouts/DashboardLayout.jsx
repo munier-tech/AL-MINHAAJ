@@ -100,7 +100,7 @@ const menuItems = [
     ]
   },
   {
-    text: "Qur'aan & Subci",
+    text: "Qur'aan & Subcis",
     icon: BookOpen,
     path: '/quran-subci',
     subItems: [
