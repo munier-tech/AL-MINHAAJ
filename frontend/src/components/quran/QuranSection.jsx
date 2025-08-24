@@ -131,9 +131,38 @@ function QuranSection() {
 					<div className="space-y-2">
 						{records.map(r => (
 							<div key={r._id} className="border rounded p-3">
-								<div className="text-sm text-gray-600">{new Date(r.date).toLocaleString()}</div>
-								<div className="text-xs text-gray-500">Fasal: {r.class?.name}</div>
-								<div className="text-xs">Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}</div>
+								<div className="flex items-center justify-between text-sm text-gray-600">
+									<span>{new Date(r.date).toLocaleString()}</span>
+									<span className="text-xs text-gray-500">Fasal: {r.class?.name}</span>
+								</div>
+								{(r.quran?.dailyLessonHint || r.quran?.currentSurah || r.quran?.taxdiid || r.quran?.studentStatus) && (
+									<div className="mt-1 text-xs text-gray-700">Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}</div>
+								)}
+								<div className="mt-2 border rounded">
+									<div className="grid grid-cols-6 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1">
+										<div className="col-span-1">Arday</div>
+										<div>Cashar (hint)</div>
+										<div>Suuro</div>
+										<div>Taxdiid</div>
+										<div>Xaalad</div>
+										<div>Faallo</div>
+									</div>
+									<div className="max-h-80 overflow-auto divide-y">
+										{(r.studentPerformances||[]).map(sp => (
+											<div key={(sp.student && sp.student._id) || Math.random()} className="grid grid-cols-6 items-center gap-2 px-2 py-1 text-xs">
+												<div className="col-span-1">
+													<div className="font-medium">{sp.student?.fullname || '-'}</div>
+													<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
+												</div>
+												<div>{sp.dailyLessonHint || ''}</div>
+												<div>{sp.currentSurah || ''}</div>
+												<div>{sp.taxdiid || ''}</div>
+												<div>{sp.studentStatus || ''}</div>
+												<div>{sp.notes || ''}</div>
+											</div>
+										))}
+									</div>
+								</div>
 							</div>
 						))}
 					</div>
