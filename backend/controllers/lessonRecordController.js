@@ -4,7 +4,7 @@ import Class from "../models/classModel.js";
 
 export const createQuranRecord = async (req, res) => {
   try {
-    const { classId, dailyLessonNumber, currentSurah, taxdiid, studentStatus, notes, studentPerformances } = req.body;
+    const { classId, dailyLessonHint, currentSurah, taxdiid, studentStatus, notes, studentPerformances } = req.body;
 
     const classDoc = await Class.findById(classId);
     if (!classDoc) return res.status(404).json({ message: "Fasalka lama helin" });
@@ -13,7 +13,7 @@ export const createQuranRecord = async (req, res) => {
       type: "quran",
       class: classId,
       quran: {
-        dailyLessonNumber,
+        dailyLessonHint,
         currentSurah,
         taxdiid,
         studentStatus,

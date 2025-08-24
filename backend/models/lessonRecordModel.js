@@ -40,7 +40,7 @@ const lessonRecordSchema = new mongoose.Schema({
     ref: "Halaqa",
   },
   quran: {
-    dailyLessonNumber: { type: Number, default: 0 },
+    dailyLessonHint: { type: String, default: "" },
     currentSurah: { type: String, default: "" },
     taxdiid: { type: String, default: "" },
     studentStatus: { type: String, enum: ["gaadhay", "dhexda_maraya", "aad_uga_fog"], default: "dhexda_maraya" },
