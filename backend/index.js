@@ -16,6 +16,8 @@ import financeRouter from "./routes/financeRoute.js"
 import feeRouter from "./routes/feeRoute.js"
 import familyFeeRouter from "./routes/familyFeeRoute.js"
 import salaryRouter from "./routes/salaryRoute.js"
+import halaqaRouter from "./routes/halaqaRoute.js"
+import lessonRecordRouter from "./routes/lessonRecordRoute.js"
 import cookieParser from "cookie-parser";
 
 dotenv.config()
@@ -72,8 +74,6 @@ app.use("/api/finance", financeRouter);
 app.use("/api/fees", feeRouter);
 app.use("/api/family-fees", familyFeeRouter);
 app.use("/api/salaries", salaryRouter);
-import halaqaRouter from "./routes/halaqaRoute.js";
-import lessonRecordRouter from "./routes/lessonRecordRoute.js";
 app.use("/api/halaqas", halaqaRouter);
 app.use("/api/lesson-records", lessonRecordRouter);
 

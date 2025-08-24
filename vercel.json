@@ -20,18 +20,23 @@
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/frontend/assets/$1"
+      "dest": "/frontend/dist/assets/$1"
     },
     {
       "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot))",
-      "dest": "/frontend/$1"
+      "dest": "/frontend/dist/$1"
     },
     {
       "handle": "filesystem"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/index.html"
+      "dest": "/frontend/dist/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "backend/index.js": {
+      "maxDuration": 30
+    }
+  }
 }
