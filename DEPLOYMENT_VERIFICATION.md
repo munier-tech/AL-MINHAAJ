@@ -15,7 +15,7 @@ Make sure these are set in Vercel dashboard:
 
 ### **Backend Environment Variables:**
 ```env
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret_key
 FRONTEND_URL=https://your-app-name.vercel.app
 NODE_ENV=production

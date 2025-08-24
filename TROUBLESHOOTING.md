@@ -14,7 +14,7 @@ Make sure these environment variables are set in your Vercel dashboard:
 
 ```env
 # Database
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 
 # JWT
 JWT_SECRET=your_jwt_secret_key

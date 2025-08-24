@@ -84,7 +84,7 @@ Ensure these are set in Vercel:
 
 ```env
 # Backend
-MONGODB_URI=mongodb+srv://DBUSER:dbuserpassword123@cluster0.sp1lws4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+MONGO_URI=mongodb+srv://DBUSER:dbuserpassword123@cluster0.sp1lws4.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 JWT_SECRET=FDZGHJYRT123456
 ACCESS_TOKEN_SECRET=FDZGHJYRT123456
 CLOUDINARY_CLOUD_NAME=dzeznfc99

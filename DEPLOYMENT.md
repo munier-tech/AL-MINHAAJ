@@ -16,7 +16,7 @@ Create a `.env` file in your root directory with the following variables:
 
 ```env
 # Database
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 
 # JWT
 JWT_SECRET=your_jwt_secret_key

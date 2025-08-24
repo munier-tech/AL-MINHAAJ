@@ -70,7 +70,7 @@ In your Vercel project dashboard, go to **Settings > Environment Variables** and
 
 #### **Backend Environment Variables**:
 ```
-MONGODB_URI=your_mongodb_connection_string
+MONGO_URI=your_mongodb_connection_string
 JWT_SECRET=your_jwt_secret
 ACCESS_TOKEN_SECRET=your_access_token_secret
 CLOUDINARY_CLOUD_NAME=your_cloudinary_name
@@ -139,6 +139,7 @@ VITE_REACT_APP_API_URL=https://your-vercel-domain.vercel.app/api
     {
       "src": "/(.*)",
       "dest": "/frontend/dist/index.html"
+    }
     }
   ]
 }

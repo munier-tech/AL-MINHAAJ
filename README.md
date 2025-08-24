@@ -112,7 +112,7 @@ npm install
 Create `.env` file in the backend directory:
 ```env
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/al-minhaaj-db
+MONGO_URI=mongodb://localhost:27017/al-minhaaj-db
 JWT_SECRET=your-super-secret-jwt-key
 CLOUDINARY_CLOUD_NAME=your-cloudinary-name
 CLOUDINARY_API_KEY=your-api-key
