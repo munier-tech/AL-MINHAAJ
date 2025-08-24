@@ -6,19 +6,16 @@ const studentPerformanceSchema = new mongoose.Schema({
     ref: "Student",
     required: true
   },
-  versesTaken: {
-    type: String,
-    default: ""
-  },
-  statusScore: {
-    type: Number,
-    min: 0,
-    default: 0
-  },
-  notes: {
-    type: String,
-    default: ""
-  }
+  // For Subci
+  versesTaken: { type: String, default: "" },
+  statusScore: { type: Number, min: 0, default: 0 },
+  // For Qur'aan per-student
+  dailyLessonHint: { type: String, default: "" },
+  currentSurah: { type: String, default: "" },
+  taxdiid: { type: String, default: "" },
+  studentStatus: { type: String, enum: ["gaadhay", "dhexda_maraya", "aad_uga_fog", ""], default: "" },
+  // Common
+  notes: { type: String, default: "" }
 }, { _id: false });
 
 const lessonRecordSchema = new mongoose.Schema({

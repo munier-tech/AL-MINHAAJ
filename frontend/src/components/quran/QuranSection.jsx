@@ -21,10 +21,14 @@ function QuranSection() {
 	const [loadingRecords, setLoadingRecords] = useState(false)
 	const [saving, setSaving] = useState(false)
 
+	const [students, setStudents] = useState([])
+	const [studentRows, setStudentRows] = useState([])
+
 	useEffect(() => { fetchClasses() }, [fetchClasses])
 
 	useEffect(() => {
 		if (selectedClassId) {
+			loadClassStudents(selectedClassId)
 			loadRecords(selectedClassId, month, year)
 		}
 	}, [selectedClassId, month, year])
@@ -37,15 +41,30 @@ function QuranSection() {
 		} catch (e) { toast.error('Ku guuldareysatay helista diiwaannada bisha') } finally { setLoadingRecords(false) }
 	}
 
+	const loadClassStudents = async (classId) => {
+		try {
+			const res = await axios.get(`/classes/getStudents/${classId}`)
+			const data = res.data
+			setStudents(data.students || [])
+			setStudentRows((data.students||[]).map(s => ({ student: s._id, dailyLessonHint: '', currentSurah: '', taxdiid: '', studentStatus: 'dhexda_maraya', notes: '' })))
+		} catch (e) {
+			toast.error('Ku guuldareysatay helista ardayda fasalka')
+		}
+	}
+
+	const updateRow = (idx, key, value) => {
+		setStudentRows(prev => prev.map((r, i) => i===idx ? { ...r, [key]: value } : r))
+	}
+
 	const saveRecord = async (e) => {
 		e.preventDefault()
 		if (!selectedClassId) return toast.error('Dooro Fasalka')
 		setSaving(true)
 		try {
-			const payload = { classId: selectedClassId, dailyLessonHint, currentSurah, taxdiid, studentStatus, notes, studentPerformances: [] }
+			const payload = { classId: selectedClassId, dailyLessonHint: '', currentSurah: '', taxdiid: '', studentStatus: 'dhexda_maraya', notes: '', studentPerformances: studentRows }
 			const res = await LessonRecordsAPI.createQuran(payload)
 			setRecords(prev => [res.data, ...prev])
-			setDailyLessonHint(''); setCurrentSurah(''); setTaxdiid(''); setStudentStatus('dhexda_maraya'); setNotes('')
+			setStudentRows(students.map(s => ({ student: s._id, dailyLessonHint: '', currentSurah: '', taxdiid: '', studentStatus: 'dhexda_maraya', notes: '' })))
 			toast.success('Diiwaan la kaydiyay')
 		} catch (e) { toast.error('Kaydintu wey fashilantay') } finally { setSaving(false) }
 	}
@@ -67,18 +86,36 @@ function QuranSection() {
 			</div>
 
 			<div className="bg-white rounded p-4 shadow">
-				<h3 className="font-medium mb-3">Ku dar Diiwaan Cusub</h3>
-				<form onSubmit={saveRecord} className="grid grid-cols-2 gap-3">
-					<input value={dailyLessonHint} onChange={e=>setDailyLessonHint(e.target.value)} placeholder="Casharka maalinle (ku dar bogagga)" className="border rounded px-3 py-2"/>
-					<input value={currentSurah} onChange={e=>setCurrentSurah(e.target.value)} placeholder="Suuradda uu marayo" className="border rounded px-3 py-2"/>
-					<input value={taxdiid} onChange={e=>setTaxdiid(e.target.value)} placeholder="Taxdiid" className="border rounded px-3 py-2"/>
-					<select value={studentStatus} onChange={e=>setStudentStatus(e.target.value)} className="border rounded px-3 py-2">
-						<option value="gaadhay">Gaadhay</option>
-						<option value="dhexda_maraya">Dhexda maraya</option>
-						<option value="aad_uga_fog">Aad uga fog</option>
-					</select>
-					<textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Faallo" className="col-span-2 border rounded px-3 py-2"/>
-					<div className="col-span-2 flex justify-end">
+				<h3 className="font-medium mb-3">Ku dar Diiwaan Maalinle (Arday walba)</h3>
+				<form onSubmit={saveRecord} className="space-y-3">
+					<div className="grid grid-cols-6 font-semibold text-sm border-b pb-2">
+						<div className="col-span-1">Arday</div>
+						<div>Cashar (hint)</div>
+						<div>Suuro</div>
+						<div>Taxdiid</div>
+						<div>Xaalad</div>
+						<div>Faallo</div>
+					</div>
+					<div className="max-h-80 overflow-auto divide-y">
+						{students.map((s, idx) => (
+							<div key={s._id} className="grid grid-cols-6 items-center gap-2 py-2">
+								<div className="col-span-1">
+									<div className="font-medium text-sm">{s.fullname}</div>
+									<div className="text-xs text-gray-500">{s.studentId||'-'}</div>
+								</div>
+								<input value={studentRows[idx]?.dailyLessonHint||''} onChange={e=>updateRow(idx,'dailyLessonHint',e.target.value)} className="border rounded px-2 py-1"/>
+								<input value={studentRows[idx]?.currentSurah||''} onChange={e=>updateRow(idx,'currentSurah',e.target.value)} className="border rounded px-2 py-1"/>
+								<input value={studentRows[idx]?.taxdiid||''} onChange={e=>updateRow(idx,'taxdiid',e.target.value)} className="border rounded px-2 py-1"/>
+								<select value={studentRows[idx]?.studentStatus||'dhexda_maraya'} onChange={e=>updateRow(idx,'studentStatus',e.target.value)} className="border rounded px-2 py-1">
+									<option value="gaadhay">Gaadhay</option>
+									<option value="dhexda_maraya">Dhexda maraya</option>
+									<option value="aad_uga_fog">Aad uga fog</option>
+								</select>
+								<input value={studentRows[idx]?.notes||''} onChange={e=>updateRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+							</div>
+						))}
+					</div>
+					<div className="flex justify-end">
 						<button disabled={saving || !selectedClassId} type="submit" className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-2 rounded">
 							<PlusCircle className="w-4 h-4"/> Kaydi Diiwaanka
 						</button>
@@ -96,7 +133,7 @@ function QuranSection() {
 							<div key={r._id} className="border rounded p-3">
 								<div className="text-sm text-gray-600">{new Date(r.date).toLocaleString()}</div>
 								<div className="text-xs text-gray-500">Fasal: {r.class?.name}</div>
-								<div className="text-xs">Cashar: {r.quran?.dailyLessonHint} | Suuro: {r.quran?.currentSurah} | Taxdiid: {r.quran?.taxdiid} | Xaalad: {r.quran?.studentStatus}</div>
+								<div className="text-xs">Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}</div>
 							</div>
 						))}
 					</div>
