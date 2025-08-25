@@ -13,7 +13,8 @@ export const SignUp = async (req, res) => {
     }
 
 
-    const existingUser = await User.findOne({ email }).select("-password");
+    const normalizedEmail = email?.trim().toLowerCase();
+    const existingUser = await User.findOne({ email: normalizedEmail }).select("-password");
 
     if (existingUser) {
       return res.status(400).json({ message: "Isticmaale horey ayuu u diiwaangashanaa" });
@@ -22,7 +23,7 @@ export const SignUp = async (req, res) => {
     let teacher = null;
 
     if (role === "teacher " || role !== "admin") {
-      teacher = await Teachers.findOne({ email })
+      teacher = await Teachers.findOne({ email: normalizedEmail })
       if (!teacher) {
         return res.status(400).json({ message: "fadlan lama helin macalin , fadlan la xidhiidh maamulka " });
       }
@@ -38,7 +39,7 @@ export const SignUp = async (req, res) => {
     const newUser = new User({
       username,
       password,
-      email,
+      email: normalizedEmail,
       role,
       profilePicture: cloudinaryResponse?.secure_url ? cloudinaryResponse?.secure_url : "lama keenin sawir",
     });
@@ -64,7 +65,8 @@ export const SignIn = async (req, res) => {
       return res.status(400).json({ message: "Fadlan geli iimaylka iyo furaha sirta ah" });
     }
 
-    const user = await User.findOne({ email });
+    const normalizedEmail = email?.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
       return res.status(400).json({ message: "Xogta lama helin - Iimaylka ama furaha sirta ah waa qalad" });
