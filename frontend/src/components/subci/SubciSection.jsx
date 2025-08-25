@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { HalaqaAPI } from '../../api/halaqa'
 import useStudentsStore from '../../store/studentsStore'
-import { Search, PlusCircle, Trash2, UserPlus, X } from 'lucide-react'
+import { Search, PlusCircle, Trash2, UserPlus, X, Menu, ChevronLeft, Save, Edit3 } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
+import { Link } from 'react-router-dom'
 
 function SubcisSection() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
@@ -19,6 +20,7 @@ function SubcisSection() {
 	const [records, setRecords] = useState([])
 	const [editingId, setEditingId] = useState(null)
 	const [editingRows, setEditingRows] = useState([])
+	const [mobileView, setMobileView] = useState('list') // 'list', 'detail', 'create'
 
 	useEffect(() => {
 		fetchStudents()
@@ -43,6 +45,7 @@ function SubcisSection() {
 			setHalaqas(prev => [res.data, ...prev])
 			setNewHalaqa({ name: '', description: '', startingSurah: '', taxdiid: '' })
 			setCreating(false)
+			setMobileView('list')
 			toast.success('Xalqad la abuuray')
 		} catch (e) {
 			toast.error(e.response?.data?.message || 'Abuuristu wey fashilantay')
@@ -60,6 +63,7 @@ function SubcisSection() {
 		try {
 			const res = await HalaqaAPI.searchByName(name)
 			setSelected(res.data)
+			setMobileView('detail')
 		} catch (e) {
 			toast.error('Xalqad lama helin')
 		}
@@ -95,7 +99,10 @@ function SubcisSection() {
 		try {
 			await HalaqaAPI.remove(id)
 			setHalaqas(prev => prev.filter(h => h._id !== id))
-			if (selected?._id === id) setSelected(null)
+			if (selected?._id === id) {
+				setSelected(null)
+				setMobileView('list')
+			}
 			toast.success('Xalqad la tirtiray')
 		} catch (e) { toast.error('Tirtiristu wey fashilantay') }
 	}
@@ -159,145 +166,314 @@ function SubcisSection() {
 	}
 
 	return (
-		<div className="p-4 space-y-6">
-			<h2 className="text-xl font-semibold">Subci - Maareynta Xalqooyinka</h2>
-			<div className="bg-white rounded p-4 shadow">
-				<div className="flex items-center gap-2 mb-3">
-					<Search className="w-4 h-4 text-gray-400"/>
-					<input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Raadi Xalqad" className="flex-1 border rounded px-3 py-2"/>
-					<button className="inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-2 rounded" onClick={() => setCreating(true)}>
-						<PlusCircle className="w-4 h-4"/> Abuur Xalqad
+		<div className="p-4 max-w-6xl mx-auto">
+			{/* Mobile Header */}
+			<div className="md:hidden flex items-center gap-3 mb-4">
+				{mobileView !== 'list' && (
+					<button 
+						onClick={() => setMobileView('list')}
+						className="p-2 rounded-full bg-gray-100"
+					>
+						<ChevronLeft size={20} />
 					</button>
+				)}
+				<h2 className="text-xl font-semibold flex-1">
+					{mobileView === 'list' && 'Maareynta Xalqooyinka'}
+					{mobileView === 'detail' && selected?.name}
+					{mobileView === 'create' && 'Abuur Xalqad'}
+				</h2>
+			</div>
+
+			{/* Halaqa List View (shown on mobile when in list mode, always on desktop) */}
+			<div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'list' ? 'hidden md:block' : ''}`}>
+				<div className="flex flex-col md:flex-row md:items-center gap-3 mb-4">
+					<button 
+						onClick={() => setMobileView('create')}
+						className="md:hidden inline-flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-3 rounded-lg"
+					>
+						<PlusCircle size={18} /> Abuur Xalqad
+					</button>
+					
+					<Link 
+						to={"/subci/manage"} 
+						className="hidden md:inline-flex items-center gap-2 bg-indigo-600 text-white px-3 py-2 rounded-lg"
+					>
+						<PlusCircle size={16} /> Abuur Xalqad
+					</Link>
+					
+					<div className="relative flex-1">
+						<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+						<input 
+							value={query} 
+							onChange={e => setQuery(e.target.value)} 
+							placeholder="Raadi Xalqad..." 
+							className="w-full border rounded-lg pl-10 pr-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+						/>
+					</div>
 				</div>
-				<div className="grid grid-cols-3 gap-3">
-					<div className="col-span-1 border rounded p-2 max-h-80 overflow-auto">
-						{halaqas.map(h => (
-							<div key={h._id} className={`flex items-center justify-between py-2 ${selected?._id===h._id?'bg-indigo-50':''}`}>
-								<button className="text-left flex-1 px-2" onClick={()=>openHalaqa(h.name)}>
+				
+				<div className="border rounded-lg divide-y max-h-[calc(100vh-220px)] overflow-auto">
+					{filtered.length === 0 ? (
+						<div className="py-6 text-center text-gray-500">
+							{query ? 'Xalqad lama helin' : 'Ma jiro xalqooyin'}
+						</div>
+					) : (
+						filtered.map(h => (
+							<div key={h._id} className={`flex items-center justify-between p-3 ${selected?._id === h._id ? 'bg-indigo-50' : ''}`}>
+								<button 
+									className="text-left flex-1"
+									onClick={() => openHalaqa(h.name)}
+								>
 									<div className="font-medium">{h.name}</div>
-									<div className="text-xs text-gray-500">Arday: {h.students?.length||0}</div>
+									<div className="text-sm text-gray-500">{h.students?.length || 0} arday</div>
 								</button>
-								<button className="text-red-600 hover:text-red-700 px-2" onClick={()=>deleteHalaqa(h._id)}>
-									<Trash2 className="w-4 h-4"/>
+								<button 
+									className="text-red-600 p-2 rounded-full hover:bg-red-50"
+									onClick={() => deleteHalaqa(h._id)}
+								>
+									<Trash2 size={18} />
 								</button>
 							</div>
-						))}
-					</div>
-					<div className="col-span-2 border rounded p-3 min-h-40">
-						{!selected ? (
-							<div className="text-gray-500">Dooro Xalqad si aad u maamusho ardayda.</div>
-						) : (
-							<div className="space-y-3">
-								<div className="flex items-center justify-between">
-									<div>
-										<h3 className="font-medium mb-2">{selected.name}</h3>
-										<p className="text-sm text-gray-500">Taxdiid: {selected.taxdiid || '-'}</p>
-									</div>
-									<button onClick={()=>setEditMode(v=>!v)} className="px-3 py-2 rounded bg-indigo-600 text-white">{editMode ? 'Dami Edit' : 'Fur Edit'}</button>
-								</div>
-								{editMode && (
-									<div>
-										<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2">
-											<div className="col-span-2">Arday</div>
-											<div>Aayadaha</div>
-											<div>Xaalad</div>
-											<div>Faallo</div>
-										</div>
-										<div className="max-h-64 overflow-auto divide-y">
-											{(selected.students||[]).map((s, idx) => (
-												<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-2">
-													<div className="col-span-2">
-														<div className="font-medium text-sm">{s.fullname}</div>
-														<div className="text-xs text-gray-500">{s.studentId||'-'}</div>
-													</div>
-													<input type="number" value={subciPerformances[idx]?.versesTaken||0} onChange={e=>updateSubciPerf(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
-													<div className="text-sm">{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][subciPerformances[idx]?.statusScore||0]}</div>
-													<input value={subciPerformances[idx]?.notes||''} onChange={e=>updateSubciPerf(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
-												</div>
-											))}
-										</div>
-										<div className="flex justify-end mt-3">
-											<button onClick={saveSubciRecord} className="px-3 py-2 rounded bg-green-600 text-white">Kaydi Subcis</button>
-										</div>
-									</div>
-								)}
-								<div className="mt-6">
-									<h3 className="font-medium mb-2">Diiwaannada Subcis</h3>
-									<div className="space-y-2">
-										{records.map(r => (
-											<div key={r._id} className="border rounded p-3">
-												<div className="flex items-center justify-between text-sm text-gray-600">
-													<span>{new Date(r.date).toLocaleString()}</span>
-													<div className="flex items-center gap-2">
-														<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
-														<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
-													</div>
-												</div>
-												<div className="grid grid-cols-4 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1 mt-2">
-													<div className="col-span-1">Arday</div>
-													<div>Aayadaha</div>
-													<div>Xaalad</div>
-													<div>Faallo</div>
-												</div>
-												<div className="max-h-64 overflow-auto divide-y">
-													{(r.studentPerformances||[]).map((sp, idx) => (
-														<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-1 text-xs">
-															<div className="col-span-1">
-																<div className="font-medium">{sp.student?.fullname || '-'}</div>
-																<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
-															</div>
-															{editingId===r._id ? (
-																<>
-																	<input type="number" value={editingRows[idx]?.versesTaken||0} onChange={e=>updateRow(idx,'versesTaken',Number(e.target.value))} className="border rounded px-2 py-1"/>
-																	<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][editingRows[idx]?.statusScore||0]}</div>
-																	<input value={editingRows[idx]?.notes||''} onChange={e=>updateRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
-																</>
-															) : (
-																<>
-																	<div>{sp.versesTaken || 0}</div>
-																	<div>{['Wanaagsan','Dhexdhexaad','Hoose','Aad u hooseeya'][sp.statusScore||0]}</div>
-																	<div>{sp.notes || ''}</div>
-																</>
-															)}
-														</div>
-													))}
-												</div>
-												{editingId===r._id && (
-													<div className="flex justify-end gap-2 mt-2">
-														<button onClick={()=>saveEdit(r._id)} className="px-2 py-1 text-xs rounded bg-green-600 text-white">Kaydi</button>
-														<button onClick={cancelEdit} className="px-2 py-1 text-xs rounded border">Jooji</button>
-													</div>
-												)}
-											</div>
-										))}
-									</div>
-								</div>
-							</div>
-						)}
-					</div>
+						))
+					)}
 				</div>
 			</div>
 
-			{creating && (
-				<div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-					<div className="bg-white rounded p-4 w-full max-w-md">
-						<div className="flex items-center justify-between mb-3">
-							<h3 className="font-semibold">Abuur Xalqad</h3>
-							<button onClick={()=>setCreating(false)}><X className="w-5 h-5"/></button>
+			{/* Halaqa Detail View (shown on mobile when in detail mode, always on desktop) */}
+			{selected && (
+				<div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'detail' ? 'hidden md:block' : ''}`}>
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="font-medium text-lg">{selected.name}</h3>
+						<button 
+							onClick={() => setEditMode(v => !v)} 
+							className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm"
+						>
+							{editMode ? 'Dami Edit' : 'Fur Edit'}
+						</button>
+					</div>
+					
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+						<div className="space-y-1">
+							<p className="text-sm text-gray-600">Suurada laga bilaabayo:</p>
+							<p className="font-medium">{selected.startingSurah || '-'}</p>
 						</div>
-						<form onSubmit={handleCreate} className="space-y-3">
-							<input value={newHalaqa.name} onChange={e=>setNewHalaqa(v=>({...v, name:e.target.value}))} placeholder="Magaca Xalqada" className="w-full border rounded px-3 py-2"/>
-							<input value={newHalaqa.description} onChange={e=>setNewHalaqa(v=>({...v, description:e.target.value}))} placeholder="Sharaxaad (ikhtiyaari)" className="w-full border rounded px-3 py-2"/>
-							<input value={newHalaqa.startingSurah} onChange={e=>setNewHalaqa(v=>({...v, startingSurah:e.target.value}))} placeholder="Starting Surah" className="w-full border rounded px-3 py-2"/>
-							<input value={newHalaqa.taxdiid} onChange={e=>setNewHalaqa(v=>({...v, taxdiid:e.target.value}))} placeholder="Taxdiid" className="w-full border rounded px-3 py-2"/>
-							<div className="flex justify-end gap-2">
-								<button type="button" onClick={()=>setCreating(false)} className="px-3 py-2 rounded border">Cancel</button>
-								<button disabled={saving} type="submit" className="px-3 py-2 rounded bg-indigo-600 text-white">Save</button>
+						<div className="space-y-1">
+							<p className="text-sm text-gray-600">Taxdiid:</p>
+							<p className="font-medium">{selected.taxdiid || '-'}</p>
+						</div>
+						<div className="md:col-span-2 space-y-1">
+							<p className="text-sm text-gray-600">Faalo:</p>
+							<p className="font-medium">{selected.description || '-'}</p>
+						</div>
+					</div>
+					
+					{editMode && (
+						<div className="mb-6">
+							<h4 className="font-medium mb-3">Diiwaanka Subciska</h4>
+							<div className="overflow-x-auto">
+								<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2 min-w-[500px]">
+									<div className="col-span-2">Arday</div>
+									<div>Aayadaha</div>
+									<div>Xaalad</div>
+									<div>Faallo</div>
+								</div>
+								<div className="divide-y min-w-[500px]">
+									{(selected.students || []).map((s, idx) => (
+										<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-3">
+											<div className="col-span-2">
+												<div className="font-medium text-sm">{s.fullname}</div>
+												<div className="text-xs text-gray-500">{s.studentId || '-'}</div>
+											</div>
+											<input 
+												type="number" 
+												value={subciPerformances[idx]?.versesTaken || 0} 
+												onChange={e => updateSubciPerf(idx, 'versesTaken', Number(e.target.value))} 
+												className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+											/>
+											<div className="text-sm">
+												{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][subciPerformances[idx]?.statusScore || 0]}
+											</div>
+											<input 
+												value={subciPerformances[idx]?.notes || ''} 
+												onChange={e => updateSubciPerf(idx, 'notes', e.target.value)} 
+												className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+											/>
+										</div>
+									))}
+								</div>
 							</div>
-						</form>
+							<div className="flex justify-end mt-4">
+								<button 
+									onClick={saveSubciRecord} 
+									className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg"
+								>
+									<Save size={16} /> Kaydi Subcis
+								</button>
+							</div>
+						</div>
+					)}
+					
+					<div className="mt-6">
+						<h4 className="font-medium mb-3">Diiwaannada Subcis</h4>
+						<div className="space-y-4">
+							{records.length === 0 ? (
+								<div className="text-center py-4 text-gray-500">
+									Ma jiro diiwaanno subcis
+								</div>
+							) : (
+								records.map(r => (
+									<div key={r._id} className="border rounded-lg p-4">
+										<div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+											<span>{new Date(r.date).toLocaleString()}</span>
+											<div className="flex items-center gap-2">
+												<button 
+													onClick={() => startEdit(r)} 
+													className="text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50"
+												>
+													{editingId === r._id ? 'Dami' : 'Tafatir'}
+												</button>
+												<button 
+													onClick={() => removeRecord(r._id)} 
+													className="text-red-600 px-2 py-1 rounded-md hover:bg-red-50"
+												>
+													Tirtir
+												</button>
+											</div>
+										</div>
+										
+										<div className="overflow-x-auto">
+											<div className="grid grid-cols-4 font-semibold text-xs bg-gray-50 border-b px-2 py-2 min-w-[500px]">
+												<div className="col-span-1">Arday</div>
+												<div>Aayadaha</div>
+												<div>Xaalad</div>
+												<div>Faallo</div>
+											</div>
+											<div className="divide-y min-w-[500px]">
+												{(r.studentPerformances || []).map((sp, idx) => (
+													<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-3 text-sm">
+														<div className="col-span-1">
+															<div className="font-medium">{sp.student?.fullname || '-'}</div>
+															<div className="text-xs text-gray-500">{sp.student?.studentId || '-'}</div>
+														</div>
+														{editingId === r._id ? (
+															<>
+																<input 
+																	type="number" 
+																	value={editingRows[idx]?.versesTaken || 0} 
+																	onChange={e => updateRow(idx, 'versesTaken', Number(e.target.value))} 
+																	className="border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+																/>
+																<div>
+																	{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][editingRows[idx]?.statusScore || 0]}
+																</div>
+																<input 
+																	value={editingRows[idx]?.notes || ''} 
+																	onChange={e => updateRow(idx, 'notes', e.target.value)} 
+																	className="border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+																/>
+															</>
+														) : (
+															<>
+																<div>{sp.versesTaken || 0}</div>
+																<div>{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</div>
+																<div className="truncate">{sp.notes || ''}</div>
+															</>
+														)}
+													</div>
+												))}
+											</div>
+										</div>
+										
+										{editingId === r._id && (
+											<div className="flex justify-end gap-2 mt-3">
+												<button 
+													onClick={() => saveEdit(r._id)} 
+													className="px-3 py-2 rounded-lg bg-green-600 text-white text-sm"
+												>
+													Kaydi
+												</button>
+												<button 
+													onClick={cancelEdit} 
+													className="px-3 py-2 rounded-lg border text-sm"
+												>
+													Jooji
+												</button>
+											</div>
+										)}
+									</div>
+								))
+							)}
+						</div>
 					</div>
 				</div>
 			)}
+
+			{/* Create Halaqa Form (shown on mobile when in create mode) */}
+			<div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'create' ? 'hidden' : ''}`}>
+				<div className="flex items-center justify-between mb-4">
+					<h3 className="font-semibold text-lg">Abuur Xalqad</h3>
+					<button 
+						onClick={() => setMobileView('list')}
+						className="p-1 rounded-full bg-gray-100"
+					>
+						<X size={20} />
+					</button>
+				</div>
+				<form onSubmit={handleCreate} className="space-y-4">
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Magaca Xalqada</label>
+						<input 
+							value={newHalaqa.name} 
+							onChange={e => setNewHalaqa(v => ({ ...v, name: e.target.value }))} 
+							placeholder="Geli magaca xalqada" 
+							className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+						/>
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Sharaxaad</label>
+						<input 
+							value={newHalaqa.description} 
+							onChange={e => setNewHalaqa(v => ({ ...v, description: e.target.value }))} 
+							placeholder="Sharaxaad (ikhtiyaari)" 
+							className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+						/>
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Suurada laga bilaabayo</label>
+						<input 
+							value={newHalaqa.startingSurah} 
+							onChange={e => setNewHalaqa(v => ({ ...v, startingSurah: e.target.value }))} 
+							placeholder="Geli suurada" 
+							className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+						/>
+					</div>
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-1">Taxdiid</label>
+						<input 
+							value={newHalaqa.taxdiid} 
+							onChange={e => setNewHalaqa(v => ({ ...v, taxdiid: e.target.value }))} 
+							placeholder="Geli taxdiidka" 
+							className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+						/>
+					</div>
+					<div className="flex justify-end gap-3 pt-2">
+						<button 
+							type="button" 
+							onClick={() => setMobileView('list')} 
+							className="px-4 py-2 rounded-lg border"
+						>
+							Jooji
+						</button>
+						<button 
+							disabled={saving} 
+							type="submit" 
+							className="px-4 py-2 rounded-lg bg-indigo-600 text-white disabled:opacity-50"
+						>
+							{saving ? 'Kaydinaya...' : 'Kaydi'}
+						</button>
+					</div>
+				</form>
+			</div>
 		</div>
 	)
 }

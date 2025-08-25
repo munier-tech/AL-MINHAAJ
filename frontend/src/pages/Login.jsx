@@ -240,12 +240,7 @@ function Login() {
         </motion.div>
 
         {/* Bottom Text */}
-        <motion.p 
-          className="text-center text-xs text-gray-500"
-          variants={itemVariants}
-        >
-          Xoojinta hay'adaha waxbarashada teknoolojiyada casriga ah
-        </motion.p>
+       
       </motion.div>
     </div>
   )

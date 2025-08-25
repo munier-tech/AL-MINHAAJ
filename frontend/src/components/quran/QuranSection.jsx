@@ -125,7 +125,7 @@ function QuranSection() {
 				<form onSubmit={saveRecord} className="space-y-3">
 					<div className="grid grid-cols-6 font-semibold text-sm border-b pb-2">
 						<div className="col-span-1">Arday</div>
-						<div>Cashar (hint)</div>
+						<div>Cashar (bog)</div>
 						<div>Suuro</div>
 						<div>Taxdiid</div>
 						<div>Xaalad</div>
@@ -180,7 +180,7 @@ function QuranSection() {
 								<div className="mt-2 border rounded">
 									<div className="grid grid-cols-6 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1">
 										<div className="col-span-1">Arday</div>
-										<div>Cashar (hint)</div>
+										<div>Cashar (bog)</div>
 										<div>Suuro</div>
 										<div>Taxdiid</div>
 										<div>Xaalad</div>

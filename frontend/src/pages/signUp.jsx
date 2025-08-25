@@ -269,7 +269,7 @@ function Signup() {
             <motion.button
               type="submit"
               disabled={isLoading}
-              className="w-full flex justify-center items-center text-black py-3 px-4 border border-black rounded-lg shadow-sm text-sm font-medium bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full flex justify-center items-center text-white py-3 px-4 border border-black rounded-lg shadow-sm text-sm font-medium bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               variants={itemVariants}
               whileHover={{ scale: isLoading ? 1 : 1.02 }}
               whileTap={{ scale: isLoading ? 1 : 0.98 }}
@@ -293,10 +293,10 @@ function Signup() {
         </motion.div>
 
         <motion.p 
-          className="text-center text-xs text-gray-500"
+          className="text-center border p-4 bg-violet-700  text-xs text-white rounded-lg font-bold"
           variants={itemVariants}
         >
-          Xoojinta hay'adaha waxbarashada teknoolojiyada casriga ah
+          FADLAN KU KAYDSO MEEL GAARA XOGAHAAGA EMAIL KA IYO PASSWORD KA SI AANAD U HILMAAMIN 
         </motion.p>
       </motion.div>
     </div>
