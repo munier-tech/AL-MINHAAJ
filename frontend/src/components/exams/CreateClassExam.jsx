@@ -43,10 +43,10 @@ const CreateClassExam = () => {
   }, [formData.classId]);
 
   const examTypeOptions = [
-    { value: 'mid-term', label: 'Mid-term Exam' },
-    { value: 'final', label: 'Final Exam' },
-    { value: 'quiz', label: 'Quiz' },
-    { value: 'assignment', label: 'Assignment' },
+    { value: 'mid-term', label: 'Imtixan Shahri 1' },
+    { value: 'final', label: 'Imtixan Yar' },
+    { value: 'quiz', label: 'Imtixan Shahri 2' },
+    { value: 'assignment', label: 'Imtixan Wayn' },
   ];
 
   const classOptions = classes.map(cls => ({

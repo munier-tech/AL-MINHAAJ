@@ -76,10 +76,10 @@ const CreateExam = () => {
     : [];
 
   const examTypeOptions = [
-    { value: "mid-term", label: "Mid-term Exam" },
-    { value: "final", label: "Final Exam" },
-    { value: "quiz", label: "Quiz" },
-    { value: "assignment", label: "Assignment" }
+    { value: "mid-term", label: "Imtixan Shari 1" },
+    { value: "final", label: "Imtixan Yar" },
+    { value: "quiz", label: "Imtixan Shahri 2" },
+    { value: "assignment", label: "Imtixan Wayn" }
   ];
 
   const handleSubmit = async (e) => {

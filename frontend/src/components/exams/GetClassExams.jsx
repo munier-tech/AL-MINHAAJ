@@ -24,10 +24,10 @@ const translations = {
     grade: "Darajada"
   },
   examTypes: {
-    "mid-term": "Imtixaan Dhexe",
-    "final": "Final",
-    "quiz": "Quiz",
-    "assignment": "Assingment"
+    "mid-term": "Imtixaan Shahri 1",
+    "final": "Imtixaan Yar",
+    "quiz": "Imtixaan Shahri 2",
+    "assignment": "Imtixaan Wayn"
   },
 };
 
