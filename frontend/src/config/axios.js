@@ -12,7 +12,7 @@ if (isProd) {
   const isEnvUrlUsable = ENV_API_URL && !/^https?:\/\/localhost(?::\d+)?/i.test(ENV_API_URL)
   BASE_URL = isEnvUrlUsable ? ENV_API_URL : '/api'
 } else {
-  BASE_URL = ENV_API_URL || 'http://localhost:5000/api'
+  BASE_URL = ENV_API_URL || 'http://localhost:4000/api'
 }
 
 console.log('Environment:', import.meta.env.MODE)
