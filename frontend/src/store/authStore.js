@@ -56,7 +56,9 @@ const useAuthStore = create((set, get) => ({
     } catch (error) {
       console.error('Login error:', error)
       set({ isLoading: false })
-      toast.error(error.response?.data?.message || 'Login failed')
+      const message = error.response?.data?.message || error.message || 'Login failed'
+      toast.error(message)
+      return { success: false, message }
     }
   },
 

@@ -1,10 +1,19 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-// Get base URL from environment variables or default to localhost
-// In production (Vercel), use relative path to same domain; in development, use localhost
-const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 
-  (import.meta.env.PROD ? '/api' : 'http://localhost:5000/api')
+// Resolve base URL safely across environments
+// - In production: prefer relative '/api' unless an absolute non-localhost URL is provided
+// - In development: use VITE_REACT_APP_API_URL or default to localhost
+const ENV_API_URL = import.meta.env.VITE_REACT_APP_API_URL
+const isProd = import.meta.env.PROD
+
+let BASE_URL
+if (isProd) {
+  const isEnvUrlUsable = ENV_API_URL && !/^https?:\/\/localhost(?::\d+)?/i.test(ENV_API_URL)
+  BASE_URL = isEnvUrlUsable ? ENV_API_URL : '/api'
+} else {
+  BASE_URL = ENV_API_URL || 'http://localhost:5000/api'
+}
 
 console.log('Environment:', import.meta.env.MODE)
 console.log('Base URL:', BASE_URL)
