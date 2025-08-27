@@ -16,11 +16,12 @@ export const generateTokens = (userId) => {
 
 
 export const setCookies = (res, accessToken) => {
+  const isProduction = process.env.NODE_ENV === 'production'
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Use secure cookies in production
-    sameSite: 'Strict', // Adjust as necessary for your application
-    maxAge: 365 * 24 * 60 * 60 * 1000 // 1 year in milliseconds
-  }
-    )
+    secure: isProduction,
+    // In production, allow cross-site cookies for frontend on a different domain
+    sameSite: isProduction ? 'None' : 'Lax',
+    maxAge: 365 * 24 * 60 * 60 * 1000
+  })
 }

@@ -179,11 +179,12 @@ export const deleteUser = async ( req , res ) => {
 
 export const LogOut = async (req, res) => {
   try {
-    res.clearCookie("accessToken", {
+    const isProduction = process.env.NODE_ENV === 'production'
+    res.clearCookie('accessToken', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "Strict",
-    });
+      secure: isProduction,
+      sameSite: isProduction ? 'None' : 'Lax'
+    })
 
     res.status(200).json({ message: "Waad ka baxday si guul leh" });
   } catch (error) {

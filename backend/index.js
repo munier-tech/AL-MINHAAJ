@@ -26,12 +26,19 @@ const app = express()
 const PORT = process.env.PORT || 4000
 
 // Configure CORS for different environments
+const allowedOrigins = process.env.NODE_ENV === 'production'
+  ? [process.env.FRONTEND_URL, 'https://your-app-name.vercel.app'].filter(Boolean)
+  : ['http://localhost:5173']
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? [process.env.FRONTEND_URL, "https://your-app-name.vercel.app"] 
-    : 'http://localhost:5173',
+  origin: function (origin, callback) {
+    // Allow non-browser requests with no origin (e.g., curl, Postman)
+    if (!origin) return callback(null, true)
+    if (allowedOrigins.includes(origin)) return callback(null, true)
+    return callback(new Error('Not allowed by CORS'))
+  },
   credentials: true,
-};
+}
 
 app.use(cors(corsOptions));
 
