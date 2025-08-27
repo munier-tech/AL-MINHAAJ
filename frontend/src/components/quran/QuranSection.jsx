@@ -4,7 +4,6 @@ import axios from '../../config/axios'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Search, PlusCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
-import PrintButton from '../common/PrintButton'
 
 function QuranSection() {
 	const { classes, fetchClasses } = useClassesStore()
@@ -163,41 +162,77 @@ function QuranSection() {
 				<div className="flex items-center justify-between mb-3">
 					<h3 className="font-medium">Diiwaannada Bisha</h3>
 					{records.length > 0 && (
-						<PrintButton 
-							title={`Qur'aan - Diiwaannada Bisha (${classes.find(c=>c._id===selectedClassId)?.name || ''})`}
-							subtitle={`Bil: ${month}/${year}`}
+						<button 
+							onClick={() => {
+								const printContent = `
+									<html>
+										<head>
+											<title>Qur'aan - Diiwaannada Bisha (${classes.find(c=>c._id===selectedClassId)?.name || ''})</title>
+											<style>
+												body { font-family: Arial, sans-serif; margin: 20px; }
+												table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+												th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+												th { background-color: #f2f2f2; }
+												.header { text-align: center; margin-bottom: 30px; }
+												.info { margin-bottom: 20px; }
+											</style>
+										</head>
+										<body>
+											<div class="header">
+												<h1>Nidaamka Maamulka AL-MINHAAJ</h1>
+												<h2>Qur'aan - Diiwaannada Bisha (${classes.find(c=>c._id===selectedClassId)?.name || ''})</h2>
+												<p>Bil: ${month}/${year}</p>
+											</div>
+											
+											<table>
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Taariikh</th>
+														<th>Arday</th>
+														<th>Cashar (bog)</th>
+														<th>Suuro</th>
+														<th>Taxdiid</th>
+														<th>Xaalad</th>
+														<th>Faallo</th>
+													</tr>
+												</thead>
+												<tbody>
+													${records.map((r, rIdx) => (r.studentPerformances||[]).map((sp, idx) => `
+														<tr>
+															<td>${rIdx + 1}.${idx + 1}</td>
+															<td>${new Date(r.date).toLocaleDateString()}</td>
+															<td>${sp.student?.fullname || '-'}</td>
+															<td>${sp.dailyLessonHint || ''}</td>
+															<td>${sp.currentSurah || ''}</td>
+															<td>${sp.taxdiid || ''}</td>
+															<td>${sp.studentStatus || ''}</td>
+															<td>${sp.notes || ''}</td>
+														</tr>
+													`).join('')).join('')}
+												</tbody>
+											</table>
+											
+											<p style="margin-top: 30px; text-align: right; font-size: 12px; color: #666;">
+												La sameeyay: ${new Date().toLocaleDateString()} saacad ${new Date().toLocaleTimeString()}
+											</p>
+										</body>
+									</html>
+								`;
+								
+								const printWindow = window.open('', '_blank');
+								printWindow.document.write(printContent);
+								printWindow.document.close();
+								printWindow.print();
+							}}
+							className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+							title="Print monthly records"
 						>
-							{`
-								<table>
-									<thead>
-										<tr>
-											<th>#</th>
-											<th>Taariikh</th>
-											<th>Arday</th>
-											<th>Cashar (bog)</th>
-											<th>Suuro</th>
-											<th>Taxdiid</th>
-											<th>Xaalad</th>
-											<th>Faallo</th>
-										</tr>
-									</thead>
-									<tbody>
-										${records.map((r, rIdx) => (r.studentPerformances||[]).map((sp, idx) => `
-											<tr>
-												<td>${rIdx + 1}.${idx + 1}</td>
-												<td>${new Date(r.date).toLocaleDateString()}</td>
-												<td>${sp.student?.fullname || '-'}</td>
-												<td>${sp.dailyLessonHint || ''}</td>
-												<td>${sp.currentSurah || ''}</td>
-												<td>${sp.taxdiid || ''}</td>
-												<td>${sp.studentStatus || ''}</td>
-												<td>${sp.notes || ''}</td>
-											</tr>
-										`).join('')).join('')}
-									</tbody>
-								</table>
-							`}
-						</PrintButton>
+							<svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+							</svg>
+							Print Monthly Records
+						</button>
 					)}
 				</div>
 				{loadingRecords ? (
@@ -209,39 +244,75 @@ function QuranSection() {
 								<div className="flex items-center justify-between text-sm text-gray-600">
 									<span>{new Date(r.date).toLocaleString()}</span>
 									<div className="flex items-center gap-2">
-										<PrintButton 
-											title={`Qur'aan - Diiwaan Maalinle (${r.class?.name || ''})`}
-											subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()} | Bil: ${month}/${year}`}
+										<button 
+											onClick={() => {
+												const printContent = `
+													<html>
+														<head>
+															<title>Qur'aan - Diiwaan Maalinle (${r.class?.name || ''})</title>
+															<style>
+																body { font-family: Arial, sans-serif; margin: 20px; }
+																table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+																th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+																th { background-color: #f2f2f2; }
+																.header { text-align: center; margin-bottom: 30px; }
+																.info { margin-bottom: 20px; }
+															</style>
+														</head>
+														<body>
+															<div class="header">
+																<h1>Nidaamka Maamulka AL-MINHAAJ</h1>
+																<h2>Qur'aan - Diiwaan Maalinle (${r.class?.name || ''})</h2>
+																<p>Taariikh: ${new Date(r.date).toLocaleDateString()} | Bil: ${month}/${year}</p>
+															</div>
+															
+															<table>
+																<thead>
+																	<tr>
+																		<th>#</th>
+																		<th>Arday</th>
+																		<th>Cashar (bog)</th>
+																		<th>Suuro</th>
+																		<th>Taxdiid</th>
+																		<th>Xaalad</th>
+																		<th>Faallo</th>
+																	</tr>
+																</thead>
+																<tbody>
+																	${(r.studentPerformances||[]).map((sp, idx) => `
+																		<tr>
+																			<td>${idx + 1}</td>
+																			<td>${sp.student?.fullname || '-'}</td>
+																			<td>${sp.dailyLessonHint || ''}</td>
+																			<td>${sp.currentSurah || ''}</td>
+																			<td>${sp.taxdiid || ''}</td>
+																			<td>${sp.studentStatus || ''}</td>
+																			<td>${sp.notes || ''}</td>
+																		</tr>
+																	`).join('')}
+																</tbody>
+															</table>
+															
+															<p style="margin-top: 30px; text-align: right; font-size: 12px; color: #666;">
+																La sameeyay: ${new Date().toLocaleDateString()} saacad ${new Date().toLocaleTimeString()}
+															</p>
+														</body>
+													</html>
+												`;
+												
+												const printWindow = window.open('', '_blank');
+												printWindow.document.write(printContent);
+												printWindow.document.close();
+												printWindow.print();
+											}}
+											className="flex items-center px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs"
+											title="Print this record"
 										>
-											{`
-												<table>
-													<thead>
-														<tr>
-															<th>#</th>
-															<th>Arday</th>
-															<th>Cashar (bog)</th>
-															<th>Suuro</th>
-															<th>Taxdiid</th>
-															<th>Xaalad</th>
-															<th>Faallo</th>
-														</tr>
-													</thead>
-													<tbody>
-														${(r.studentPerformances||[]).map((sp, idx) => `
-															<tr>
-																<td>${idx + 1}</td>
-																<td>${sp.student?.fullname || '-'}</td>
-																<td>${sp.dailyLessonHint || ''}</td>
-																<td>${sp.currentSurah || ''}</td>
-																<td>${sp.taxdiid || ''}</td>
-																<td>${sp.studentStatus || ''}</td>
-																<td>${sp.notes || ''}</td>
-															</tr>
-														`).join('')}
-													</tbody>
-												</table>
-											`}
-										</PrintButton>
+											<svg className="mr-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+											</svg>
+											Print
+										</button>
 										<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
 										<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
 									</div>

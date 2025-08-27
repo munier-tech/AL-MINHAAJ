@@ -5,7 +5,6 @@ import { Search, PlusCircle, Trash2, UserPlus, X, Menu, ChevronLeft, Save, Edit3
 import { toast } from 'react-toastify'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Link } from 'react-router-dom'
-import PrintButton from '../common/PrintButton'
 
 function SubcisSection() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
@@ -327,43 +326,78 @@ function SubcisSection() {
 										<div className="flex items-center justify-between text-sm text-gray-600 mb-3">
 											<span>{new Date(r.date).toLocaleString()}</span>
 											<div className="flex items-center gap-2">
-												<PrintButton 
-													title={`Diiwaan Subcis - ${selected?.name || ''}`}
-													subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()}`}
+												<button 
+													onClick={() => {
+														const printContent = `
+															<html>
+																<head>
+																	<title>Diiwaan Subcis - ${selected?.name || ''}</title>
+																	<style>
+																		body { font-family: Arial, sans-serif; margin: 20px; }
+																		table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+																		th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+																		th { background-color: #f2f2f2; }
+																		.header { text-align: center; margin-bottom: 30px; }
+																		.info { margin-bottom: 20px; }
+																	</style>
+																</head>
+																<body>
+																	<div class="header">
+																		<h1>Nidaamka Maamulka AL-MINHAAJ</h1>
+																		<h2>Diiwaan Subcis - ${selected?.name || ''}</h2>
+																		<p>Taariikh: ${new Date(r.date).toLocaleDateString()}</p>
+																	</div>
+																	
+																	<div class="info">
+																		<h3>Xogta Guud ee Xalqada</h3>
+																		<p><strong>Xalqada:</strong> ${selected?.name || '-'}</p>
+																		<p><strong>Suurada laga bilaabayo:</strong> ${selected?.startingSurah || '-'}</p>
+																		<p><strong>Taxdiid:</strong> ${selected?.taxdiid || '-'}</p>
+																	</div>
+																	
+																	<table>
+																		<thead>
+																			<tr>
+																				<th>#</th>
+																				<th>Arday</th>
+																				<th>Aayadaha</th>
+																				<th>Xaalad</th>
+																				<th>Faallo</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			${(r.studentPerformances || []).map((sp, idx) => `
+																				<tr>
+																					<td>${idx + 1}</td>
+																					<td>${sp.student?.fullname || sp.student?.name || '-'}</td>
+																					<td>${sp.versesTaken ?? '-'}</td>
+																					<td>${['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</td>
+																					<td>${sp.notes || '-'}</td>
+																				</tr>
+																			`).join('')}
+																		</tbody>
+																	</table>
+																	
+																	<p style="margin-top: 30px; text-align: right; font-size: 12px; color: #666;">
+																		La sameeyay: ${new Date().toLocaleDateString()} saacad ${new Date().toLocaleTimeString()}
+																	</p>
+																</body>
+															</html>
+														`;
+														
+														const printWindow = window.open('', '_blank');
+														printWindow.document.write(printContent);
+														printWindow.document.close();
+														printWindow.print();
+													}}
+													className="flex items-center px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-xs"
+													title="Print this record"
 												>
-													{`
-														<div class="info-section">
-															<div class="info-label">Xogta Guud ee Xalqada</div>
-															<div class="info-grid">
-																<div class="info-item"><span class="info-key">Xalqada</span><span class="info-value">${selected?.name || '-'}</span></div>
-																<div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${selected?.startingSurah || '-'}</span></div>
-																<div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${selected?.taxdiid || '-'}</span></div>
-															</div>
-														</div>
-														<table>
-															<thead>
-																<tr>
-																	<th>#</th>
-																	<th>Arday</th>
-																	<th>Aayadaha</th>
-																	<th>Xaalad</th>
-																	<th>Faallo</th>
-																</tr>
-															</thead>
-															<tbody>
-																${(r.studentPerformances || []).map((sp, idx) => `
-																	<tr>
-																		<td>${idx + 1}</td>
-																		<td>${sp.student?.fullname || sp.student?.name || '-'}</td>
-																		<td>${sp.versesTaken ?? '-'}</td>
-																		<td>${['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</td>
-																		<td>${sp.notes || '-'}</td>
-																	</tr>
-																`).join('')}
-															</tbody>
-														</table>
-													`}
-												</PrintButton>
+													<svg className="mr-1 w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+														<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+													</svg>
+													Print
+												</button>
 												<button 
 													onClick={() => startEdit(r)} 
 													className="text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50"

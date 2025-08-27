@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { PlusCircle, Trash2, Edit3, Save, UserPlus, UserMinus, Search, Menu, X } from 'lucide-react';
-import PrintButton from '../common/PrintButton';
 
 const SubcisManage = () => {
   // Mock data and state to simulate your actual implementation
@@ -303,40 +302,75 @@ const SubcisManage = () => {
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Xogta Xalqada</h3>
               <div className="flex items-center gap-2">
-                <PrintButton 
-                  title={`Xogta Xalqada - ${selected?.name || ''}`}
-                  subtitle={`Ardayda iyo faahfaahinta - ${new Date().toLocaleDateString()}`}
+                <button 
+                  onClick={() => {
+                    const printContent = `
+                      <html>
+                        <head>
+                          <title>Xogta Xalqada - ${selected?.name || ''}</title>
+                          <style>
+                            body { font-family: Arial, sans-serif; margin: 20px; }
+                            table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+                            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                            th { background-color: #f2f2f2; }
+                            .header { text-align: center; margin-bottom: 30px; }
+                            .info { margin-bottom: 20px; }
+                          </style>
+                        </head>
+                        <body>
+                          <div class="header">
+                            <h1>Nidaamka Maamulka AL-MINHAAJ</h1>
+                            <h2>Xogta Xalqada - ${selected?.name || ''}</h2>
+                            <p>Ardayda iyo faahfaahinta - ${new Date().toLocaleDateString()}</p>
+                          </div>
+                          
+                          <div class="info">
+                            <h3>Xogta Guud ee Xalqada</h3>
+                            <p><strong>Magaca:</strong> ${selected?.name || '-'}</p>
+                            <p><strong>Suurada laga bilaabayo:</strong> ${editingMeta?.startingSurah || '-'}</p>
+                            <p><strong>Taxdiid:</strong> ${editingMeta?.taxdiid || '-'}</p>
+                            <p><strong>Faallo:</strong> ${editingMeta?.description || '-'}</p>
+                          </div>
+                          
+                          <table>
+                            <thead>
+                              <tr>
+                                <th>#</th>
+                                <th>Magaca Ardayga</th>
+                                <th>Lambarka Ardayga</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              ${(selected?.students || []).map((s, idx) => `
+                                <tr>
+                                  <td>${idx + 1}</td>
+                                  <td>${s.fullname || '-'}</td>
+                                  <td>${s.studentId || '-'}</td>
+                                </tr>
+                              `).join('')}
+                            </tbody>
+                          </table>
+                          
+                          <p style="margin-top: 30px; text-align: right; font-size: 12px; color: #666;">
+                            La sameeyay: ${new Date().toLocaleDateString()} saacad ${new Date().toLocaleTimeString()}
+                          </p>
+                        </body>
+                      </html>
+                    `;
+                    
+                    const printWindow = window.open('', '_blank');
+                    printWindow.document.write(printContent);
+                    printWindow.document.close();
+                    printWindow.print();
+                  }}
+                  className="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
+                  title="Print this report"
                 >
-                  {`
-                    <div class="info-section">
-                      <div class="info-label">Xogta Guud ee Xalqada</div>
-                      <div class="info-grid">
-                        <div class="info-item"><span class="info-key">Magaca</span><span class="info-value">${selected?.name || '-'}</span></div>
-                        <div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${editingMeta?.startingSurah || '-'}</span></div>
-                        <div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${editingMeta?.taxdiid || '-'}</span></div>
-                        <div class="info-item"><span class="info-key">Faallo</span><span class="info-value">${editingMeta?.description || '-'}</span></div>
-                      </div>
-                    </div>
-                    <table>
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Magaca Ardayga</th>
-                          <th>Lambarka Ardayga</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        ${(selected?.students || []).map((s, idx) => `
-                          <tr>
-                            <td>${idx + 1}</td>
-                            <td>${s.fullname || '-'}</td>
-                            <td>${s.studentId || '-'}</td>
-                          </tr>
-                        `).join('')}
-                      </tbody>
-                    </table>
-                  `}
-                </PrintButton>
+                  <svg className="mr-2 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                  </svg>
+                  Print Report
+                </button>
                 <button 
                   onClick={() => setMobileView('list')}
                   className="md:hidden text-gray-500 p-1"
