@@ -4,6 +4,7 @@ import axios from '../../config/axios'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Search, PlusCircle, ChevronDown, ChevronUp, Menu, X } from 'lucide-react'
 import { toast } from 'react-toastify'
+import PrintButton from '../common/PrintButton'
 
 function QuranSection() {
   const { classes, fetchClasses } = useClassesStore()
@@ -339,46 +340,79 @@ function QuranSection() {
         )}
       </div>
 
-      {/* Records List */}
-      <div className="bg-white rounded p-4 shadow">
-        <h3 className="font-medium mb-3">Diiwaannada Bisha</h3>
-        {loadingRecords ? (
-          <div className="text-sm text-gray-500 py-4 text-center">Diiwaanno ayaa soo degaya...</div>
-        ) : records.length === 0 ? (
-          <div className="text-sm text-gray-500 py-4 text-center">Lama helin diiwaanno bishan</div>
-        ) : (
-          <div className="space-y-4">
-            {records.map(r => (
-              <div key={r._id} className="border rounded p-3">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 text-sm text-gray-600">
-                  <div>
-                    <span>{new Date(r.date).toLocaleString()}</span>
-                    <span className="block text-xs text-gray-500">Fasal: {r.class?.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs px-2 py-1 border rounded">Tafatir</button>
-                    <button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs px-2 py-1 border rounded">Tirtir</button>
-                  </div>
-                </div>
-                
-                {(r.quran?.dailyLessonHint || r.quran?.currentSurah || r.quran?.taxdiid || r.quran?.studentStatus) && (
-                  <div className="mt-2 text-xs text-gray-700 p-2 bg-gray-50 rounded">
-                    Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}
-                  </div>
-                )}
-                
-                {editingRecordId === r._id ? (
-                  renderStudentPerformances(r, true, editingRows)
-                ) : (
-                  renderStudentPerformances(r)
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
+			<div className="bg-white rounded p-4 shadow">
+				<h3 className="font-medium mb-3">Diiwaannada Bisha</h3>
+				{loadingRecords ? (
+					<div className="text-sm text-gray-500">Diiwaanno ayaa soo degaya...</div>
+				) : (
+					<div className="space-y-2">
+						{records.map(r => (
+							<div key={r._id} className="border rounded p-3">
+								<div className="flex items-center justify-between text-sm text-gray-600">
+									<span>{new Date(r.date).toLocaleString()}</span>
+									<div className="flex items-center gap-2">
+										<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
+										<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
+									</div>
+								</div>
+								<span className="text-xs text-gray-500">Fasal: {r.class?.name}</span>
+								{(r.quran?.dailyLessonHint || r.quran?.currentSurah || r.quran?.taxdiid || r.quran?.studentStatus) && (
+									<div className="mt-1 text-xs text-gray-700">Guud: {r.quran?.dailyLessonHint} | {r.quran?.currentSurah} | {r.quran?.taxdiid} | {r.quran?.studentStatus}</div>
+								)}
+								<div className="mt-2 border rounded">
+									<div className="grid grid-cols-6 font-semibold text-[11px] bg-gray-50 border-b px-2 py-1">
+										<div className="col-span-1">Arday</div>
+										<div>Cashar (bog)</div>
+										<div>Suuro</div>
+										<div>Taxdiid</div>
+										<div>Xaalad</div>
+										<div>Faallo</div>
+									</div>
+									<div className="max-h-80 overflow-auto divide-y">
+										{(r.studentPerformances||[]).map((sp, idx) => (
+											<div key={(sp.student && sp.student._id) || Math.random()} className="grid grid-cols-6 items-center gap-2 px-2 py-1 text-xs">
+												<div className="col-span-1">
+													<div className="font-medium">{sp.student?.fullname || '-'}</div>
+													<div className="text-[10px] text-gray-500">{sp.student?.studentId || '-'}</div>
+												</div>
+												{editingRecordId===r._id ? (
+													<>
+														<input value={editingRows[idx]?.dailyLessonHint||''} onChange={e=>updateEditingRow(idx,'dailyLessonHint',e.target.value)} className="border rounded px-2 py-1"/>
+														<input value={editingRows[idx]?.currentSurah||''} onChange={e=>updateEditingRow(idx,'currentSurah',e.target.value)} className="border rounded px-2 py-1"/>
+														<input value={editingRows[idx]?.taxdiid||''} onChange={e=>updateEditingRow(idx,'taxdiid',e.target.value)} className="border rounded px-2 py-1"/>
+														<select value={editingRows[idx]?.studentStatus||'dhexda_maraya'} onChange={e=>updateEditingRow(idx,'studentStatus',e.target.value)} className="border rounded px-2 py-1">
+															<option value="gaadhay">Gaadhay</option>
+															<option value="dhexda_maraya">Dhexda maraya</option>
+															<option value="aad_uga_fog">Aad uga fog</option>
+														</select>
+														<input value={editingRows[idx]?.notes||''} onChange={e=>updateEditingRow(idx,'notes',e.target.value)} className="border rounded px-2 py-1"/>
+													</>
+												) : (
+													<>
+														<div>{sp.dailyLessonHint || ''}</div>
+														<div>{sp.currentSurah || ''}</div>
+														<div>{sp.taxdiid || ''}</div>
+														<div>{sp.studentStatus || ''}</div>
+														<div>{sp.notes || ''}</div>
+													</>
+												)}
+											</div>
+										))}
+									</div>
+									{editingRecordId===r._id && (
+										<div className="flex justify-end gap-2 mt-2">
+											<button onClick={()=>saveEdit(r._id)} className="px-2 py-1 text-xs rounded bg-green-600 text-white">Kaydi</button>
+											<button onClick={cancelEdit} className="px-2 py-1 text-xs rounded border">Jooji</button>
+										</div>
+									)}
+								</div>
+							</div>
+						))}
+					</div>
+				)}
+			</div>
+		</div>
+	)
 }
 
 export default QuranSection

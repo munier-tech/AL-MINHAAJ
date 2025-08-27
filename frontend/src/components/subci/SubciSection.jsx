@@ -5,6 +5,7 @@ import { Search, PlusCircle, Trash2, UserPlus, X, Menu, ChevronLeft, Save, Edit3
 import { toast } from 'react-toastify'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Link } from 'react-router-dom'
+import PrintButton from '../common/PrintButton'
 
 function SubcisSection() {
 	const { students, fetchStudents, loading: studentsLoading } = useStudentsStore()
