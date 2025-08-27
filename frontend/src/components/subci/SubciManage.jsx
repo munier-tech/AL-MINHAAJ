@@ -1,29 +1,38 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { PlusCircle, Trash2, Edit3, Save, UserPlus, UserMinus, Search, Menu, X } from 'lucide-react';
+import { PlusCircle, Trash2, Edit3, Save, UserPlus, UserMinus, Search, Menu, X, ChevronLeft } from 'lucide-react';
+import { HalaqaAPI } from '../../api/halaqa';
+import { toast } from 'react-toastify';
+import useStudentsStore from '../../store/studentsStore';
 
 const SubcisManage = () => {
-  // Mock data and state to simulate your actual implementation
-  const [halaqas, setHalaqas] = useState([
-    { _id: '1', name: 'Xalqada Koowaad', students: [{ _id: 's1', fullname: 'Cali Xasan', studentId: 'ST001' }], startingSurah: 'Al-Fatiha', taxdiid: 'Basic', description: 'Xalqad bilow ah' },
-    { _id: '2', name: 'Xalqada Labaad', students: [{ _id: 's2', fullname: 'Aasha Maxamed', studentId: 'ST002' }, { _id: 's3', fullname: 'Cumar Cabdi', studentId: 'ST003' }], startingSurah: 'Al-Baqara', taxdiid: 'Intermediate', description: 'Xalqad dhexe' },
-  ]);
-  
-  const [students, setStudents] = useState([
-    { _id: 's1', fullname: 'Cali Xasan', studentId: 'ST001' },
-    { _id: 's2', fullname: 'Aasha Maxamed', studentId: 'ST002' },
-    { _id: 's3', fullname: 'Cumar Cabdi', studentId: 'ST003' },
-    { _id: 's4', fullname: 'Safiya Axmed', studentId: 'ST004' },
-    { _id: 's5', fullname: 'Maxamed Ibrahim', studentId: 'ST005' },
-  ]);
-  
+  const { students, fetchStudents, loading: studentsLoading } = useStudentsStore();
+  const [halaqas, setHalaqas] = useState([]);
   const [query, setQuery] = useState('');
   const [creating, setCreating] = useState({ name: '', startingSurah: '', taxdiid: '', description: '' });
   const [selected, setSelected] = useState(null);
   const [editingMeta, setEditingMeta] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [studentsLoading, setStudentsLoading] = useState(false);
   const [mobileView, setMobileView] = useState('list'); // 'list', 'create', 'details'
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch halaqas and students on component mount
+  useEffect(() => {
+    loadHalaqas();
+    fetchStudents();
+  }, []);
+
+  const loadHalaqas = async () => {
+    try {
+      setLoading(true);
+      const res = await HalaqaAPI.getAll();
+      setHalaqas(res.data);
+    } catch (e) {
+      toast.error('Ku guuldareysatay inaad soo dejiso Xalqooyinka');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Filter halaqas based on search query
   const filtered = useMemo(() => {
@@ -31,24 +40,23 @@ const SubcisManage = () => {
     return halaqas.filter(h => h.name.toLowerCase().includes(query.toLowerCase()));
   }, [query, halaqas]);
 
-  // Mock functions to simulate API calls
   const createHalaqa = async (e) => {
     e.preventDefault();
-    if (!creating.name.trim()) return;
+    if (!creating.name.trim()) {
+      toast.error('Magaca Xalqada geli');
+      return;
+    }
+    
     setSaving(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const newHalaqa = {
-        _id: String(Date.now()),
-        ...creating,
-        students: []
-      };
-      setHalaqas(prev => [newHalaqa, ...prev]);
+      const res = await HalaqaAPI.create(creating);
+      setHalaqas(prev => [res.data, ...prev]);
       setCreating({ name: '', startingSurah: '', taxdiid: '', description: '' });
       setMobileView('list');
+      toast.success('Xalqad la abuuray');
     } catch (e) {
       console.error('Creation failed', e);
+      toast.error(e.response?.data?.message || 'Abuuristu wey fashilantay');
     } finally {
       setSaving(false);
     }
@@ -69,13 +77,14 @@ const SubcisManage = () => {
     if (!selected) return;
     setSaving(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
       const updatedHalaqa = { ...selected, ...editingMeta };
-      setHalaqas(prev => prev.map(h => h._id === selected._id ? updatedHalaqa : h));
-      setSelected(updatedHalaqa);
+      const res = await HalaqaAPI.update(selected._id, updatedHalaqa);
+      setHalaqas(prev => prev.map(h => h._id === selected._id ? res.data : h));
+      setSelected(res.data);
+      toast.success('Xalqad la cusbooneysiiyay');
     } catch (e) {
       console.error('Update failed', e);
+      toast.error(e.response?.data?.message || 'Cusbooneysiintu wey fashilantay');
     } finally {
       setSaving(false);
     }
@@ -84,15 +93,16 @@ const SubcisManage = () => {
   const deleteHalaqa = async (id) => {
     if (!window.confirm('Ma hubtaa inaad tirtirayso?')) return;
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await HalaqaAPI.remove(id);
       setHalaqas(prev => prev.filter(h => h._id !== id));
       if (selected?._id === id) {
         setSelected(null);
         setMobileView('list');
       }
+      toast.success('Xalqad la tirtiray');
     } catch (e) {
       console.error('Deletion failed', e);
+      toast.error(e.response?.data?.message || 'Tirtiristu wey fashilantay');
     }
   };
 
@@ -100,19 +110,13 @@ const SubcisManage = () => {
     if (!selected) return;
     setSaving(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const studentToAdd = students.find(s => s._id === sid);
-      if (studentToAdd) {
-        const updatedHalaqa = {
-          ...selected,
-          students: [...selected.students, studentToAdd]
-        };
-        setHalaqas(prev => prev.map(h => h._id === selected._id ? updatedHalaqa : h));
-        setSelected(updatedHalaqa);
-      }
+      const res = await HalaqaAPI.addStudents(selected._id, [sid]);
+      setHalaqas(prev => prev.map(h => h._id === selected._id ? res.data : h));
+      setSelected(res.data);
+      toast.success('Arday la daray');
     } catch (e) {
       console.error('Adding student failed', e);
+      toast.error(e.response?.data?.message || 'Ku daristu wey fashilantay');
     } finally {
       setSaving(false);
     }
@@ -122,16 +126,13 @@ const SubcisManage = () => {
     if (!selected) return;
     setSaving(true);
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      const updatedHalaqa = {
-        ...selected,
-        students: selected.students.filter(s => s._id !== sid)
-      };
-      setHalaqas(prev => prev.map(h => h._id === selected._id ? updatedHalaqa : h));
-      setSelected(updatedHalaqa);
+      const res = await HalaqaAPI.removeStudent(selected._id, sid);
+      setHalaqas(prev => prev.map(h => h._id === selected._id ? res.data : h));
+      setSelected(res.data);
+      toast.success('Arday la saaray');
     } catch (e) {
       console.error('Removing student failed', e);
+      toast.error(e.response?.data?.message || 'Ka saaristu wey fashilantay');
     } finally {
       setSaving(false);
     }
@@ -233,7 +234,7 @@ const SubcisManage = () => {
               disabled={saving} 
               className="w-full inline-flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
             >
-              <PlusCircle size={18} /> Abuur
+              <PlusCircle size={18} /> {saving ? 'Kaydinaya...' : 'Abuur'}
             </button>
           </form>
         </div>
@@ -254,7 +255,9 @@ const SubcisManage = () => {
           </div>
           
           <div className="divide-y max-h-[calc(100vh-220px)] overflow-auto">
-            {filtered.length === 0 ? (
+            {loading ? (
+              <div className="py-6 text-center text-gray-500">Soo dejineysa...</div>
+            ) : filtered.length === 0 ? (
               <div className="py-6 text-center text-gray-500">
                 {query ? 'Xalqad lama helin' : 'Ma jiro xalqooyin'}
               </div>
@@ -353,7 +356,7 @@ const SubcisManage = () => {
                 onClick={saveMeta} 
                 className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg disabled:opacity-50"
               >
-                <Save size={18} /> Kaydi
+                <Save size={18} /> {saving ? 'Kaydinaya...' : 'Kaydi'}
               </button>
             </div>
             
