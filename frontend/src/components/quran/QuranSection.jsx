@@ -181,18 +181,20 @@ function QuranSection() {
 									</tr>
 								</thead>
 								<tbody>
-									${records.map((r, rIdx) => (r.studentPerformances||[]).map((sp, idx) => `
-										<tr>
-											<td>${rIdx + 1}.${idx + 1}</td>
-											<td>${new Date(r.date).toLocaleDateString()}</td>
-											<td>${sp.student?.fullname || '-'}</td>
-											<td>${sp.dailyLessonHint || ''}</td>
-											<td>${sp.currentSurah || ''}</td>
-											<td>${sp.taxdiid || ''}</td>
-											<td>${sp.studentStatus || ''}</td>
-											<td>${sp.notes || ''}</td>
-										</tr>
-									`).join('')).join('')}
+									{records.map((r, rIdx) => (
+										(r.studentPerformances || []).map((sp, idx) => (
+											<tr key={`${r._id}-${sp.student?._id || idx}`}>
+												<td>{`${rIdx + 1}.${idx + 1}`}</td>
+												<td>{new Date(r.date).toLocaleDateString()}</td>
+												<td>{sp.student?.fullname || '-'}</td>
+												<td>{sp.dailyLessonHint || ''}</td>
+												<td>{sp.currentSurah || ''}</td>
+												<td>{sp.taxdiid || ''}</td>
+												<td>{sp.studentStatus || ''}</td>
+												<td>{sp.notes || ''}</td>
+											</tr>
+										))
+									))}
 								</tbody>
 							</table>
 						</PrintButton>
@@ -224,17 +226,17 @@ function QuranSection() {
 													</tr>
 												</thead>
 												<tbody>
-													${(r.studentPerformances||[]).map((sp, idx) => `
-														<tr>
-															<td>${idx + 1}</td>
-															<td>${sp.student?.fullname || '-'}</td>
-															<td>${sp.dailyLessonHint || ''}</td>
-															<td>${sp.currentSurah || ''}</td>
-															<td>${sp.taxdiid || ''}</td>
-															<td>${sp.studentStatus || ''}</td>
-															<td>${sp.notes || ''}</td>
+													{(r.studentPerformances||[]).map((sp, idx) => (
+														<tr key={(sp.student && sp.student._id) || idx}>
+															<td>{idx + 1}</td>
+															<td>{sp.student?.fullname || '-'}</td>
+															<td>{sp.dailyLessonHint || ''}</td>
+															<td>{sp.currentSurah || ''}</td>
+															<td>{sp.taxdiid || ''}</td>
+															<td>{sp.studentStatus || ''}</td>
+															<td>{sp.notes || ''}</td>
 														</tr>
-													`).join('')}
+													))}
 												</tbody>
 											</table>
 										</PrintButton>
