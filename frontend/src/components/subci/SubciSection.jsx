@@ -379,151 +379,209 @@ function SubcisSection() {
         </div>
       </div>
 
-      {/* Halaqa Detail View (shown on mobile when in detail mode, always on desktop) */}
-      {selected && (
-        <div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'detail' ? 'hidden md:block' : ''}`}>
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-medium text-lg">{selected.name}</h3>
-            <button 
-              onClick={() => setEditMode(v => !v)} 
-              className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm"
-            >
-              {editMode ? 'Dami Edit' : 'Fur Edit'}
-            </button>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-            <div className="space-y-1">
-              <p className="text-sm text-gray-600">Suurada laga bilaabayo:</p>
-              <p className="font-medium">{selected.startingSurah || '-'}</p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-sm text-gray-600">Taxdiid:</p>
-              <p className="font-medium">{selected.taxdiid || '-'}</p>
-            </div>
-            <div className="md:col-span-2 space-y-1">
-              <p className="text-sm text-gray-600">Faalo:</p>
-              <p className="font-medium">{selected.description || '-'}</p>
-            </div>
-          </div>
-          
-          {editMode && (
-            <div className="mb-6">
-              <h4 className="font-medium mb-3">Diiwaanka Subciska</h4>
-              <div className="overflow-x-auto">
-                <div className="grid grid-cols-5 font-semibold text-sm border-b pb-2 min-w-[500px]">
-                  <div className="col-span-2">Arday</div>
-                  <div>Aayadaha</div>
-                  <div>Xaalad</div>
-                  <div>Faallo</div>
-                </div>
-                <div className="divide-y min-w-[500px]">
-                  {(selected.students || []).map((s, idx) => (
-                    <div key={s._id} className="grid grid-cols-5 items-center gap-2 py-3">
-                      <div className="col-span-2">
-                        <div className="font-medium text-sm">{s.fullname}</div>
-                        <div className="text-xs text-gray-500">{s.studentId || '-'}</div>
-                      </div>
-                      <input 
-                        type="number" 
-                        value={subciPerformances[idx]?.versesTaken || 0} 
-                        onChange={e => updateSubciPerf(idx, 'versesTaken', Number(e.target.value))} 
-                        className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      />
-                      <div className="text-sm">
-                        {getStatusText(subciPerformances[idx]?.statusScore || 0)}
-                      </div>
-                      <input 
-                        value={subciPerformances[idx]?.notes || ''} 
-                        onChange={e => updateSubciPerf(idx, 'notes', e.target.value)} 
-                        className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                      />
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex justify-end mt-4">
-                <button 
-                  onClick={saveSubciRecord} 
-                  className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg"
-                >
-                  <Save size={16} /> Kaydi Subcis
-                </button>
-              </div>
-            </div>
-          )}
-          
-          <div className="mt-6">
-            <h4 className="font-medium mb-3">Diiwaannada Subcis</h4>
-            <div className="space-y-4">
-              {records.length === 0 ? (
-                <div className="text-center py-4 text-gray-500">
-                  Ma jiro diiwaanno subcis
-                </div>
-              ) : (
-                records.map(r => (
-                  <div key={r._id} className="border rounded-lg p-4">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 text-sm text-gray-600 mb-3">
-                      <span>{new Date(r.date).toLocaleString()}</span>
-                      <div className="flex items-center gap-2">
-                        <PrintButton 
-                          title={`Diiwaan Subcis - ${selected?.name || ''}`}
-                          subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()}`}
-                        >
-                          <div className="info-section">
-                            <div className="info-label">Xogta Guud ee Xalqada</div>
-                            <div className="info-grid">
-                              <div className="info-item"><span className="info-key">Xalqada</span><span className="info-value">{selected?.name || '-'}</span></div>
-                              <div className="info-item"><span className="info-key">Suurada laga bilaabayo</span><span className="info-value">{selected?.startingSurah || '-'}</span></div>
-                              <div className="info-item"><span className="info-key">Taxdiid</span><span className="info-value">{selected?.taxdiid || '-'}</span></div>
-                            </div>
-                          </div>
-                          <table>
-                            <thead>
-                              <tr>
-                                <th>#</th>
-                                <th>Arday</th>
-                                <th>Aayadaha</th>
-                                <th>Xaalad</th>
-                                <th>Faallo</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {(r.studentPerformances || []).map((sp, idx) => (
-                                <tr key={idx}>
-                                  <td>{idx + 1}</td>
-                                  <td>{sp.student?.fullname || sp.student?.name || '-'}</td>
-                                  <td>{sp.versesTaken ?? '-'}</td>
-                                  <td>{getStatusText(sp.statusScore || 0)}</td>
-                                  <td>{sp.notes || '-'}</td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </PrintButton>
-                        <button 
-                          onClick={() => startEdit(r)} 
-                          className="text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50"
-                        >
-                          {editingId === r._id ? 'Dami' : 'Tafatir'}
-                        </button>
-                        <button 
-                          onClick={() => removeRecord(r._id)} 
-                          className="text-red-600 px-2 py-1 rounded-md hover:bg-red-50"
-                        >
-                          Tirtir
-                        </button>
-                      </div>
-                    </div>
-                    
-                    {renderStudentPerformances(r, editingId === r._id, editingRows)}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+			{/* Halaqa Detail View (shown on mobile when in detail mode, always on desktop) */}
+			{selected && (
+				<div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'detail' ? 'hidden md:block' : ''}`}>
+					<div className="flex items-center justify-between mb-4">
+						<h3 className="font-medium text-lg">{selected.name}</h3>
+						<button 
+							onClick={() => setEditMode(v => !v)} 
+							className="px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm"
+						>
+							{editMode ? 'Dami Edit' : 'Fur Edit'}
+						</button>
+					</div>
+					
+					<div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+						<div className="space-y-1">
+							<p className="text-sm text-gray-600">Suurada laga bilaabayo:</p>
+							<p className="font-medium">{selected.startingSurah || '-'}</p>
+						</div>
+						<div className="space-y-1">
+							<p className="text-sm text-gray-600">Taxdiid:</p>
+							<p className="font-medium">{selected.taxdiid || '-'}</p>
+						</div>
+						<div className="md:col-span-2 space-y-1">
+							<p className="text-sm text-gray-600">Faalo:</p>
+							<p className="font-medium">{selected.description || '-'}</p>
+						</div>
+					</div>
+					
+					{editMode && (
+						<div className="mb-6">
+							<h4 className="font-medium mb-3">Diiwaanka Subciska</h4>
+							<div className="overflow-x-auto">
+								<div className="grid grid-cols-5 font-semibold text-sm border-b pb-2 min-w-[500px]">
+									<div className="col-span-2">Arday</div>
+									<div>Aayadaha</div>
+									<div>Xaalad</div>
+									<div>Faallo</div>
+								</div>
+								<div className="divide-y min-w-[500px]">
+									{(selected.students || []).map((s, idx) => (
+										<div key={s._id} className="grid grid-cols-5 items-center gap-2 py-3">
+											<div className="col-span-2">
+												<div className="font-medium text-sm">{s.fullname}</div>
+												<div className="text-xs text-gray-500">{s.studentId || '-'}</div>
+											</div>
+											<input 
+												type="number" 
+												value={subciPerformances[idx]?.versesTaken || 0} 
+												onChange={e => updateSubciPerf(idx, 'versesTaken', Number(e.target.value))} 
+												className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+											/>
+											<div className="text-sm">
+												{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][subciPerformances[idx]?.statusScore || 0]}
+											</div>
+											<input 
+												value={subciPerformances[idx]?.notes || ''} 
+												onChange={e => updateSubciPerf(idx, 'notes', e.target.value)} 
+												className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+											/>
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="flex justify-end mt-4">
+								<button 
+									onClick={saveSubciRecord} 
+									className="inline-flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg"
+								>
+									<Save size={16} /> Kaydi Subcis
+								</button>
+							</div>
+						</div>
+					)}
+					
+					<div className="mt-6">
+						<h4 className="font-medium mb-3">Diiwaannada Subcis</h4>
+						<div className="space-y-4">
+							{records.length === 0 ? (
+								<div className="text-center py-4 text-gray-500">
+									Ma jiro diiwaanno subcis
+								</div>
+							) : (
+								records.map(r => (
+									<div key={r._id} className="border rounded-lg p-4">
+										<div className="flex items-center justify-between text-sm text-gray-600 mb-3">
+											<span>{new Date(r.date).toLocaleString()}</span>
+											<div className="flex items-center gap-2">
+												<PrintButton 
+													title={`Diiwaan Subcis - ${selected?.name || ''}`}
+													subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()}`}
+												>
+													<div class="info-section">
+														<div class="info-label">Xogta Guud ee Xalqada</div>
+														<div class="info-grid">
+															<div class="info-item"><span class="info-key">Xalqada</span><span class="info-value">${selected?.name || '-'}</span></div>
+															<div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${selected?.startingSurah || '-'}</span></div>
+															<div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${selected?.taxdiid || '-'}</span></div>
+														</div>
+													</div>
+													<table>
+														<thead>
+															<tr>
+																<th>#</th>
+																<th>Arday</th>
+																<th>Aayadaha</th>
+																<th>Xaalad</th>
+																<th>Faallo</th>
+															</tr>
+														</thead>
+														<tbody>
+															${(r.studentPerformances || []).map((sp, idx) => `
+																<tr>
+																	<td>${idx + 1}</td>
+																	<td>${sp.student?.fullname || sp.student?.name || '-'}</td>
+																	<td>${sp.versesTaken ?? '-'}</td>
+																	<td>${['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</td>
+																	<td>${sp.notes || '-'}</td>
+																</tr>
+															`).join('')}
+														</tbody>
+													</table>
+												</PrintButton>
+												<button 
+													onClick={() => startEdit(r)} 
+													className="text-indigo-600 px-2 py-1 rounded-md hover:bg-indigo-50"
+												>
+													{editingId === r._id ? 'Dami' : 'Tafatir'}
+												</button>
+												<button 
+													onClick={() => removeRecord(r._id)} 
+													className="text-red-600 px-2 py-1 rounded-md hover:bg-red-50"
+												>
+													Tirtir
+												</button>
+											</div>
+										</div>
+										
+										<div className="overflow-x-auto">
+											<div className="grid grid-cols-4 font-semibold text-xs bg-gray-50 border-b px-2 py-2 min-w-[500px]">
+												<div className="col-span-1">Arday</div>
+												<div>Aayadaha</div>
+												<div>Xaalad</div>
+												<div>Faallo</div>
+											</div>
+											<div className="divide-y min-w-[500px]">
+												{(r.studentPerformances || []).map((sp, idx) => (
+													<div key={(sp.student && sp.student._id) || idx} className="grid grid-cols-4 items-center gap-2 px-2 py-3 text-sm">
+														<div className="col-span-1">
+															<div className="font-medium">{sp.student?.fullname || '-'}</div>
+															<div className="text-xs text-gray-500">{sp.student?.studentId || '-'}</div>
+														</div>
+														{editingId === r._id ? (
+															<>
+																<input 
+																	type="number" 
+																	value={editingRows[idx]?.versesTaken || 0} 
+																	onChange={e => updateRow(idx, 'versesTaken', Number(e.target.value))} 
+																	className="border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+																/>
+																<div>
+																	{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][editingRows[idx]?.statusScore || 0]}
+																</div>
+																<input 
+																	value={editingRows[idx]?.notes || ''} 
+																	onChange={e => updateRow(idx, 'notes', e.target.value)} 
+																	className="border rounded-lg px-2 py-1 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+																/>
+															</>
+														) : (
+															<>
+																<div>{sp.versesTaken || 0}</div>
+																<div>{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</div>
+																<div className="truncate">{sp.notes || ''}</div>
+															</>
+														)}
+													</div>
+												))}
+											</div>
+										</div>
+										
+										{editingId === r._id && (
+											<div className="flex justify-end gap-2 mt-3">
+												<button 
+													onClick={() => saveEdit(r._id)} 
+													className="px-3 py-2 rounded-lg bg-green-600 text-white text-sm"
+												>
+													Kaydi
+												</button>
+												<button 
+													onClick={cancelEdit} 
+													className="px-3 py-2 rounded-lg border text-sm"
+												>
+													Jooji
+												</button>
+											</div>
+										)}
+									</div>
+								))
+							)}
+						</div>
+					</div>
+				</div>
+			)}
 
       {/* Create Halaqa Form (shown on mobile when in create mode) */}
       <div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'create' ? 'hidden' : ''}`}>

@@ -362,18 +362,20 @@ function QuranSection() {
 									</tr>
 								</thead>
 								<tbody>
-									${records.map((r, rIdx) => (r.studentPerformances||[]).map((sp, idx) => `
-										<tr>
-											<td>${rIdx + 1}.${idx + 1}</td>
-											<td>${new Date(r.date).toLocaleDateString()}</td>
-											<td>${sp.student?.fullname || '-'}</td>
-											<td>${sp.dailyLessonHint || ''}</td>
-											<td>${sp.currentSurah || ''}</td>
-											<td>${sp.taxdiid || ''}</td>
-											<td>${sp.studentStatus || ''}</td>
-											<td>${sp.notes || ''}</td>
-										</tr>
-									`).join('')).join('')}
+									{records.map((r, rIdx) => (
+										(r.studentPerformances || []).map((sp, idx) => (
+											<tr key={`${r._id}-${sp.student?._id || idx}`}>
+												<td>{`${rIdx + 1}.${idx + 1}`}</td>
+												<td>{new Date(r.date).toLocaleDateString()}</td>
+												<td>{sp.student?.fullname || '-'}</td>
+												<td>{sp.dailyLessonHint || ''}</td>
+												<td>{sp.currentSurah || ''}</td>
+												<td>{sp.taxdiid || ''}</td>
+												<td>{sp.studentStatus || ''}</td>
+												<td>{sp.notes || ''}</td>
+											</tr>
+										))
+									))}
 								</tbody>
 							</table>
 						</PrintButton>
@@ -388,6 +390,37 @@ function QuranSection() {
 								<div className="flex items-center justify-between text-sm text-gray-600">
 									<span>{new Date(r.date).toLocaleString()}</span>
 									<div className="flex items-center gap-2">
+										<PrintButton 
+											title={`Qur'aan - Diiwaan Maalinle (${r.class?.name || ''})`}
+											subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()} | Bil: ${month}/${year}`}
+										>
+											<table>
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Arday</th>
+														<th>Cashar (bog)</th>
+														<th>Suuro</th>
+														<th>Taxdiid</th>
+														<th>Xaalad</th>
+														<th>Faallo</th>
+													</tr>
+												</thead>
+												<tbody>
+													${(r.studentPerformances||[]).map((sp, idx) => `
+														<tr>
+															<td>${idx + 1}</td>
+															<td>${sp.student?.fullname || '-'}</td>
+															<td>${sp.dailyLessonHint || ''}</td>
+															<td>${sp.currentSurah || ''}</td>
+															<td>${sp.taxdiid || ''}</td>
+															<td>${sp.studentStatus || ''}</td>
+															<td>${sp.notes || ''}</td>
+														</tr>
+													`).join('')}
+												</tbody>
+											</table>
+										</PrintButton>
 										<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
 										<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
 									</div>
