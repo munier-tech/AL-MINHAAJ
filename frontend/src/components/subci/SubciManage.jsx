@@ -1,8 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { PlusCircle, Trash2, Edit3, Save, UserPlus, UserMinus, Search, Menu, X, ChevronLeft } from 'lucide-react';
-import { HalaqaAPI } from '../../api/halaqa';
-import { toast } from 'react-toastify';
-import useStudentsStore from '../../store/studentsStore';
+import { PlusCircle, Trash2, Edit3, Save, UserPlus, UserMinus, Search, Menu, X } from 'lucide-react';
 
 const SubcisManage = () => {
   const { students, fetchStudents, loading: studentsLoading } = useStudentsStore();
@@ -304,12 +301,46 @@ const SubcisManage = () => {
           <div className={`bg-white rounded-lg p-4 shadow ${mobileView !== 'details' ? 'hidden md:block' : 'md:col-span-2'}`}>
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-medium">Xogta Xalqada</h3>
-              <button 
-                onClick={() => setMobileView('list')}
-                className="md:hidden text-gray-500 p-1"
-              >
-                <X size={18} />
-              </button>
+              <div className="flex items-center gap-2">
+                <PrintButton 
+                  title={`Xogta Xalqada - ${selected?.name || ''}`}
+                  subtitle={`Ardayda iyo faahfaahinta - ${new Date().toLocaleDateString()}`}
+                >
+                  <div class="info-section">
+                    <div class="info-label">Xogta Guud ee Xalqada</div>
+                    <div class="info-grid">
+                      <div class="info-item"><span class="info-key">Magaca</span><span class="info-value">${selected?.name || '-'}</span></div>
+                      <div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${editingMeta?.startingSurah || '-'}</span></div>
+                      <div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${editingMeta?.taxdiid || '-'}</span></div>
+                      <div class="info-item"><span class="info-key">Faallo</span><span class="info-value">${editingMeta?.description || '-'}</span></div>
+                    </div>
+                  </div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>#</th>
+                        <th>Magaca Ardayga</th>
+                        <th>Lambarka Ardayga</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      ${(selected?.students || []).map((s, idx) => `
+                        <tr>
+                          <td>${idx + 1}</td>
+                          <td>${s.fullname || '-'}</td>
+                          <td>${s.studentId || '-'}</td>
+                        </tr>
+                      `).join('')}
+                    </tbody>
+                  </table>
+                </PrintButton>
+                <button 
+                  onClick={() => setMobileView('list')}
+                  className="md:hidden text-gray-500 p-1"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
