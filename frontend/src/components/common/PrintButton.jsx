@@ -1,5 +1,4 @@
 import React from 'react';
-import { renderToString } from 'react-dom/server';
 import { FiPrinter } from 'react-icons/fi';
 
 const PrintButton = ({ 
@@ -22,10 +21,7 @@ const PrintButton = ({
       return;
     }
     
-    // Render children to static HTML
-    const childrenHtml = renderToString(<div>{children}</div>);
-
-    // Generate the print content
+    // Generate the print content with proper HTML structure
     const printContent = `
       <!DOCTYPE html>
       <html>
@@ -210,7 +206,9 @@ const PrintButton = ({
             ${subtitle ? `<div class="subtitle">${subtitle}</div>` : ''}
           </div>
           
-          ${childrenHtml}
+          <div id="content">
+            ${children}
+          </div>
           
           <div class="print-date">
             <strong>La sameeyay:</strong> ${new Date().toLocaleDateString('so-SO', { 
