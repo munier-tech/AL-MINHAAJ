@@ -19,6 +19,7 @@ import salaryRouter from "./routes/salaryRoute.js"
 import halaqaRouter from "./routes/halaqaRoute.js"
 import lessonRecordRouter from "./routes/lessonRecordRoute.js"
 import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
 
 dotenv.config()
 const app = express()
@@ -70,11 +71,15 @@ app.get('/api', (req, res) => {
 
 // Health check endpoint for Vercel
 app.get('/api/health', (req, res) => {
+  const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
+  
   res.json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
-    vercel: process.env.VERCEL || false
+    vercel: process.env.VERCEL || false,
+    database: dbStatus,
+    mongoUri: process.env.MONGO_URI ? 'configured' : 'missing'
   });
 });
 
@@ -119,6 +124,10 @@ connectDb().then(() => {
   console.log("Connected to MongoDB successfully");
 }).catch(err => {
   console.error("Failed to connect to MongoDB:", err);
+  // Don't crash in production/Vercel
+  if (process.env.NODE_ENV === 'production' && process.env.VERCEL) {
+    console.log("Continuing in Vercel mode despite DB connection failure");
+  }
 });
 
 // Only start server if not in Vercel production environment
