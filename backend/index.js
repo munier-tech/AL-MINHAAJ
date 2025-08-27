@@ -24,8 +24,6 @@ import mongoose from "mongoose"
 dotenv.config()
 const app = express()
 
-const PORT = process.env.PORT || 4000
-
 // Basic CORS setup
 app.use(cors({
   origin: process.env.FRONTEND_URL || '*',
@@ -112,6 +110,7 @@ if (process.env.MONGO_URI) {
 
 // Only start server in development
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  const PORT = process.env.PORT || 4000
   app.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`)
     console.log(`🌍 Environment: ${process.env.NODE_ENV}`)
@@ -120,4 +119,5 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   console.log("🌐 Running in Vercel serverless mode")
 }
 
+// Export for Vercel serverless
 export default app
