@@ -307,33 +307,35 @@ const SubcisManage = () => {
                   title={`Xogta Xalqada - ${selected?.name || ''}`}
                   subtitle={`Ardayda iyo faahfaahinta - ${new Date().toLocaleDateString()}`}
                 >
-                  <div className="info-section">
-                    <div className="info-label">Xogta Guud ee Xalqada</div>
-                    <div className="info-grid">
-                      <div className="info-item"><span className="info-key">Magaca</span><span className="info-value">{selected?.name || '-'}</span></div>
-                      <div className="info-item"><span className="info-key">Suurada laga bilaabayo</span><span className="info-value">{editingMeta?.startingSurah || '-'}</span></div>
-                      <div className="info-item"><span className="info-key">Taxdiid</span><span className="info-value">{editingMeta?.taxdiid || '-'}</span></div>
-                      <div className="info-item"><span className="info-key">Faallo</span><span className="info-value">{editingMeta?.description || '-'}</span></div>
+                  {`
+                    <div class="info-section">
+                      <div class="info-label">Xogta Guud ee Xalqada</div>
+                      <div class="info-grid">
+                        <div class="info-item"><span class="info-key">Magaca</span><span class="info-value">${selected?.name || '-'}</span></div>
+                        <div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${editingMeta?.startingSurah || '-'}</span></div>
+                        <div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${editingMeta?.taxdiid || '-'}</span></div>
+                        <div class="info-item"><span class="info-key">Faallo</span><span class="info-value">${editingMeta?.description || '-'}</span></div>
+                      </div>
                     </div>
-                  </div>
-                  <table>
-                    <thead>
-                      <tr>
-                        <th>#</th>
-                        <th>Magaca Ardayga</th>
-                        <th>Lambarka Ardayga</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(selected?.students || []).map((s, idx) => (
-                        <tr key={s._id || idx}>
-                          <td>{idx + 1}</td>
-                          <td>{s.fullname || '-'}</td>
-                          <td>{s.studentId || '-'}</td>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Magaca Ardayga</th>
+                          <th>Lambarka Ardayga</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                      </thead>
+                      <tbody>
+                        ${(selected?.students || []).map((s, idx) => `
+                          <tr>
+                            <td>${idx + 1}</td>
+                            <td>${s.fullname || '-'}</td>
+                            <td>${s.studentId || '-'}</td>
+                          </tr>
+                        `).join('')}
+                      </tbody>
+                    </table>
+                  `}
                 </PrintButton>
                 <button 
                   onClick={() => setMobileView('list')}
