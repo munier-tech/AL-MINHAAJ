@@ -470,12 +470,12 @@ function SubcisSection() {
 													title={`Diiwaan Subcis - ${selected?.name || ''}`}
 													subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()}`}
 												>
-													<div class="info-section">
-														<div class="info-label">Xogta Guud ee Xalqada</div>
-														<div class="info-grid">
-															<div class="info-item"><span class="info-key">Xalqada</span><span class="info-value">${selected?.name || '-'}</span></div>
-															<div class="info-item"><span class="info-key">Suurada laga bilaabayo</span><span class="info-value">${selected?.startingSurah || '-'}</span></div>
-															<div class="info-item"><span class="info-key">Taxdiid</span><span class="info-value">${selected?.taxdiid || '-'}</span></div>
+													<div className="info-section">
+														<div className="info-label">Xogta Guud ee Xalqada</div>
+														<div className="info-grid">
+															<div className="info-item"><span className="info-key">Xalqada</span><span className="info-value">{selected?.name || '-'}</span></div>
+															<div className="info-item"><span className="info-key">Suurada laga bilaabayo</span><span className="info-value">{selected?.startingSurah || '-'}</span></div>
+															<div className="info-item"><span className="info-key">Taxdiid</span><span className="info-value">{selected?.taxdiid || '-'}</span></div>
 														</div>
 													</div>
 													<table>
@@ -489,15 +489,15 @@ function SubcisSection() {
 															</tr>
 														</thead>
 														<tbody>
-															${(r.studentPerformances || []).map((sp, idx) => `
-																<tr>
-																	<td>${idx + 1}</td>
-																	<td>${sp.student?.fullname || sp.student?.name || '-'}</td>
-																	<td>${sp.versesTaken ?? '-'}</td>
-																	<td>${['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</td>
-																	<td>${sp.notes || '-'}</td>
+															{(r.studentPerformances || []).map((sp, idx) => (
+																<tr key={(sp.student && sp.student._id) || idx}>
+																	<td>{idx + 1}</td>
+																	<td>{sp.student?.fullname || sp.student?.name || '-'}</td>
+																	<td>{sp.versesTaken ?? '-'}</td>
+																	<td>{['Wanaagsan', 'Dhexdhexaad', 'Hoose', 'Aad u hooseeya'][sp.statusScore || 0]}</td>
+																	<td>{sp.notes || '-'}</td>
 																</tr>
-															`).join('')}
+															))}
 														</tbody>
 													</table>
 												</PrintButton>
