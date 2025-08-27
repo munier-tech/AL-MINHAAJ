@@ -4,6 +4,7 @@ import axios from '../../config/axios'
 import { LessonRecordsAPI } from '../../api/lessonRecords'
 import { Search, PlusCircle } from 'lucide-react'
 import { toast } from 'react-toastify'
+import PrintButton from '../common/PrintButton'
 
 function QuranSection() {
 	const { classes, fetchClasses } = useClassesStore()
@@ -169,6 +170,37 @@ function QuranSection() {
 								<div className="flex items-center justify-between text-sm text-gray-600">
 									<span>{new Date(r.date).toLocaleString()}</span>
 									<div className="flex items-center gap-2">
+										<PrintButton 
+											title={`Qur'aan - Diiwaan Maalinle (${r.class?.name || ''})`}
+											subtitle={`Taariikh: ${new Date(r.date).toLocaleDateString()} | Bil: ${month}/${year}`}
+										>
+											<table>
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Arday</th>
+														<th>Cashar (bog)</th>
+														<th>Suuro</th>
+														<th>Taxdiid</th>
+														<th>Xaalad</th>
+														<th>Faallo</th>
+													</tr>
+												</thead>
+												<tbody>
+													${(r.studentPerformances||[]).map((sp, idx) => `
+														<tr>
+															<td>${idx + 1}</td>
+															<td>${sp.student?.fullname || '-'}</td>
+															<td>${sp.dailyLessonHint || ''}</td>
+															<td>${sp.currentSurah || ''}</td>
+															<td>${sp.taxdiid || ''}</td>
+															<td>${sp.studentStatus || ''}</td>
+															<td>${sp.notes || ''}</td>
+														</tr>
+													`).join('')}
+												</tbody>
+											</table>
+										</PrintButton>
 										<button onClick={()=>startEdit(r)} className="text-indigo-600 text-xs">Tafatir</button>
 										<button onClick={()=>removeRecord(r._id)} className="text-red-600 text-xs">Tirtir</button>
 									</div>
