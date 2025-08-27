@@ -58,12 +58,23 @@ app.get('/api', (req, res) => {
     message: 'AL-MINHAAJ Management System API is running!', 
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV,
+    vercel: process.env.VERCEL || false,
     cors: {
       allowedOrigins: Array.isArray(corsOptions.origin) 
         ? corsOptions.origin.join(', ') 
         : corsOptions.origin,
       credentials: corsOptions.credentials
     }
+  });
+});
+
+// Health check endpoint for Vercel
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV,
+    vercel: process.env.VERCEL || false
   });
 });
 
@@ -84,6 +95,25 @@ app.use("/api/salaries", salaryRouter);
 app.use("/api/halaqas", halaqaRouter);
 app.use("/api/lesson-records", lessonRecordRouter);
 
+// Global error handling middleware
+app.use((err, req, res, next) => {
+  console.error('Global error handler:', err);
+  res.status(500).json({ 
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : err.message,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 404 handler for unmatched routes
+app.use('*', (req, res) => {
+  res.status(404).json({ 
+    error: 'Not Found',
+    message: `Route ${req.originalUrl} not found`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Connect to database immediately
 connectDb().then(() => {
   console.log("Connected to MongoDB successfully");
@@ -91,12 +121,15 @@ connectDb().then(() => {
   console.error("Failed to connect to MongoDB:", err);
 });
 
-// Only start server if not in serverless environment
+// Only start server if not in Vercel production environment
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
     console.log(`Environment: ${process.env.NODE_ENV}`);
+    console.log(`Vercel: ${process.env.VERCEL || 'false'}`);
   });
+} else {
+  console.log('Running in Vercel serverless mode - no server startup needed');
 }
 
 // Export app for Vercel serverless
