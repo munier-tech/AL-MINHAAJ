@@ -66,7 +66,11 @@ export const SignIn = async (req, res) => {
     }
 
     const normalizedEmail = email?.trim().toLowerCase();
-    const user = await User.findOne({ email: normalizedEmail });
+    // Case-insensitive lookup to handle legacy users saved with mixed-case emails
+    let user = await User.findOne({ email: normalizedEmail }).collation({ locale: 'en', strength: 2 });
+    if (!user) {
+      user = await User.findOne({ email: { $regex: `^${normalizedEmail}$`, $options: 'i' } });
+    }
 
     if (!user) {
       return res.status(400).json({ message: "Xogta lama helin - Iimaylka ama furaha sirta ah waa qalad" });
