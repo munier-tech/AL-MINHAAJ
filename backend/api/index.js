@@ -27,8 +27,13 @@ export default async function handler(req, res) {
       await connectDb()
     } catch (e) {
       console.error('DB connect error in serverless handler:', e)
-      // Continue; some routes may not need DB
     }
+  }
+
+  // If hitting auth endpoints and DB is still down, fail fast with 503
+  if (req.url?.startsWith('/api/auth') && mongoose.connection.readyState !== 1) {
+    res.status(503).json({ message: 'Database unavailable', code: 'DB_UNAVAILABLE' })
+    return
   }
   
   // Let Express handle the request
