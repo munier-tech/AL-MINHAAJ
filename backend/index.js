@@ -87,8 +87,8 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 404 handler
-app.use('*', (req, res) => {
+// Catch-all 404 handler (Express 5 safe - no path)
+app.use((req, res) => {
   res.status(404).json({ 
     error: 'Not found',
     message: `Route ${req.originalUrl} not found`,
