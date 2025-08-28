@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import { generateTokens, setCookies } from "../helpers/authentication.js";
 import User from "../models/userModel.js";
 import Teachers from "../models/teachersModel.js";
+import mongoose from "mongoose";
 
 export const SignUp = async (req, res) => {
   try {
@@ -82,6 +83,17 @@ export const SignIn = async (req, res) => {
       return res.status(400).json({ message: "Xogta lama helin - Iimaylka ama furaha sirta ah waa qalad" });
     }
 
+    // Diagnostics for production issues
+    const hasAccessTokenSecret = Boolean(process.env.ACCESS_TOKEN_SECRET);
+    const dbState = mongoose.connection.readyState; // 0=disconnected,1=connected,2=connecting,3=disconnecting
+    if (!hasAccessTokenSecret) {
+      console.error("SignIn error: ACCESS_TOKEN_SECRET is missing in environment");
+      return res.status(500).json({ message: "Server configuration error", code: "MISSING_ACCESS_TOKEN_SECRET" });
+    }
+    if (dbState !== 1) {
+      console.warn("SignIn warning: DB not connected (state:", dbState, ") proceeding but may fail");
+    }
+
     const { accessToken } = generateTokens(user._id);
     setCookies(res, accessToken);
 
@@ -96,7 +108,11 @@ export const SignIn = async (req, res) => {
     res.status(200).json({ message: "Si guul leh ayaad u gashay", user: userData });
   } catch (error) {
     console.error("message happening in sign in function ", error);
-    res.status(500).json({ message: error.message });
+    const isProd = process.env.NODE_ENV === 'production';
+    res.status(500).json({
+      message: isProd ? "A server error has occurred" : error.message,
+      code: "SIGNIN_FAILED"
+    });
   }
 };
 
