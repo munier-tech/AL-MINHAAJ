@@ -8,13 +8,11 @@ export const connectDb = async () => {
       return
     }
     
-    // Connect with timeout
+    // Connect with supported options only
     const conn = await mongoose.connect(process.env.MONGO_URI, {
       maxPoolSize: 5,
       serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-      bufferCommands: false,
-      bufferMaxEntries: 0
+      socketTimeoutMS: 45000
     })
     
     console.log(`✅ MongoDB connected: ${conn.connection.host}`)
